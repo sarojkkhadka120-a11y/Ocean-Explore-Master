@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Ocean Explore — Master Canvas (Figma Node 53:172)</title>
+  <meta name="description" content="Interactive 2D horizontal and vertical ocean exploration viewer for the exact Figma 14931 x 19963 Master Scene.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- App Header / Top HUD -->
+  <header class="hud-header" id="hud-header">
+    <div class="hud-brand">
+      <div class="hud-pulse"></div>
+      <div class="hud-title-group">
+        <h1 class="hud-title">OCEAN EXPLORE</h1>
+        <span class="hud-badge">FIGMA NODE 53:172 &bull; 14,931 &times; 19,963 PX</span>
+      </div>
+    </div>
+
+    <!-- Live Telemetry Display -->
+    <div class="hud-telemetry">
+      <div class="telemetry-item">
+        <span class="telemetry-label">CURRENT ZONE</span>
+        <span class="telemetry-value zone-text" id="telemetry-zone">Surface &amp; Atmosphere</span>
+      </div>
+      <div class="telemetry-divider"></div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">DEPTH</span>
+        <span class="telemetry-value depth-text" id="telemetry-depth">0 m</span>
+      </div>
+      <div class="telemetry-divider"></div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">FIGMA COORDS</span>
+        <span class="telemetry-value mono-text" id="telemetry-coords">X: 0 &bull; Y: 0</span>
+      </div>
+      <div class="telemetry-divider"></div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">ZOOM</span>
+        <span class="telemetry-value mono-text" id="telemetry-zoom">10%</span>
+      </div>
+    </div>
+
+    <!-- Actions & Controls -->
+    <div class="hud-actions">
+      <div class="zoom-controls">
+        <button class="btn-icon" id="btn-zoom-out" title="Zoom Out" aria-label="Zoom Out">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+        <button class="btn-text" id="btn-zoom-reset" title="Reset Zoom">Fit</button>
+        <button class="btn-icon" id="btn-zoom-in" title="Zoom In" aria-label="Zoom In">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+        <button class="btn-text" id="btn-zoom-100" title="1:1 Actual Figma Pixels">100%</button>
+      </div>
+
+      <button class="btn-action" id="btn-toggle-inspector" title="Toggle Node Inspector">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <span>Inspect</span>
+      </button>
+
+      <a href="ocean-scene.svg" download="ocean-scene-master-53-172.svg" class="btn-primary" id="btn-download" title="Download Standalone Master SVG">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span>Standalone SVG</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Waypoints Navigation Bar -->
+  <nav class="waypoints-bar" id="waypoints-bar" aria-label="Ocean Zones">
+    <span class="waypoints-title">WAYPOINTS:</span>
+    <button class="waypoint-pill active" data-x="1200" data-y="300" data-zoom="0.6">
+      ☀️ Surface &amp; Sky <small>(0m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="1250" data-y="1250" data-zoom="1.2">
+      🤿 Diver &amp; Reef <small>(35m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="2200" data-y="1800" data-zoom="0.4">
+      🌊 Sunlit Shallows <small>(150m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="3500" data-y="5500" data-zoom="0.25">
+      🧗 The Great Wall <small>(850m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="4500" data-y="10500" data-zoom="0.2">
+      🌑 Midnight Trench <small>(3,200m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="6000" data-y="15500" data-zoom="0.18">
+      🌌 Abyssal Plain <small>(5,800m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="8000" data-y="19000" data-zoom="0.16">
+      🕳️ Ocean Trench Bed <small>(10,000m)</small>
+    </button>
+  </nav>
+
+  <!-- Main Exploration 2D Viewport -->
+  <main class="exploration-container" id="exploration-container" tabindex="0">
+    <!-- SVG Canvas Wrapper -->
+    <div class="canvas-transform-wrapper" id="canvas-wrapper">
+      <!-- Embedded Master SVG -->
+      <object type="image/svg+xml" data="assets/ocean-scene.svg" id="ocean-svg-object" class="ocean-svg-view" aria-label="Ocean Depth Master Canvas"></object>
+    </div>
+
+    <!-- Drag / Pan Hint Overlay -->
+    <div class="interaction-hint" id="interaction-hint">
+      <span class="hint-icon">✥</span>
+      <span>Click &amp; Drag to Pan &bull; Scroll or Pinch to Zoom &bull; Use Minimap to Jump</span>
+    </div>
+
+    <!-- Inspector Tooltip / Hover Card -->
+    <div class="inspector-card" id="inspector-card">
+      <div class="inspector-badge" id="inspector-type">SVG LAYER</div>
+      <div class="inspector-title" id="inspector-title">Element Name</div>
+      <div class="inspector-grid">
+        <div class="inspector-stat">
+          <span class="stat-label">NODE ID</span>
+          <span class="stat-val" id="inspector-node-id">--</span>
+        </div>
+        <div class="inspector-stat">
+          <span class="stat-label">BOUNDS (X, Y)</span>
+          <span class="stat-val" id="inspector-bounds">--</span>
+        </div>
+        <div class="inspector-stat">
+          <span class="stat-label">SIZE (W &times; H)</span>
+          <span class="stat-val" id="inspector-size">--</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Minimap / Radar HUD -->
+  <aside class="radar-minimap" id="radar-minimap" title="Ocean Radar Minimap — Click to Jump">
+    <div class="minimap-header">
+      <div class="minimap-tag">
+        <span class="radar-dot"></span>
+        <span>RADAR OVERVIEW</span>
+      </div>
+      <span class="minimap-coords" id="minimap-coords">14,931 &times; 19,963</span>
+    </div>
+
+    <div class="minimap-viewport-container" id="minimap-container">
+      <!-- Mini Ocean Canvas Graphic -->
+      <svg class="minimap-graphic" viewBox="0 0 14931 19963" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="mini-sky" x1="0" y1="1143" x2="0" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#c9ecee" />
+            <stop offset="1" stop-color="#49a9e6" />
+          </linearGradient>
+          <linearGradient id="mini-ocean" x1="0" y1="1152" x2="0" y2="19963" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#34c6d3" />
+            <stop offset="0.08" stop-color="#168aa0" />
+            <stop offset="0.4" stop-color="#0b5874" />
+            <stop offset="0.6" stop-color="#07364f" />
+            <stop offset="1" stop-color="#031f31" />
+          </linearGradient>
+        </defs>
+        <!-- Mini Sky -->
+        <rect x="0" y="0" width="14931" height="1143" fill="url(#mini-sky)" />
+        <!-- Mini Ocean -->
+        <rect x="0" y="1152" width="14931" height="18811" fill="url(#mini-ocean)" />
+        <!-- Mini Mountain Silhouette -->
+        <polygon points="385,1126 1000,932 2317,1126" fill="#7ecae7" opacity="0.6" />
+        <!-- Mini Cliff Contour (Simplified) -->
+        <polygon points="-50,5433 1811,6202 3159,6860 3900,8373 4204,9718 4962,10130 5649,10564 6843,12902 8403,15735 10074,17126 12751,19207 -50,19207" fill="#062235" opacity="0.8" />
+        <!-- Mini Island -->
+        <polygon points="-303,1182 100,500 814,1182" fill="#023d54" />
+        <!-- Mini Water Surface Line -->
+        <line x1="0" y1="1152" x2="14931" y2="1152" stroke="#00e8ff" stroke-width="120" opacity="0.8" />
+      </svg>
+
+      <!-- Active Viewport Box Indicator -->
+      <div class="minimap-lens" id="minimap-lens">
+        <div class="lens-crosshair"></div>
+      </div>
+    </div>
+
+    <!-- Minimap Quick Depths -->
+    <div class="minimap-scale">
+      <span>0 m (Surface)</span>
+      <span>1,000 m (Twilight)</span>
+      <span>4,000 m (Midnight)</span>
+      <span>10,000 m (Abyss)</span>
+    </div>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>

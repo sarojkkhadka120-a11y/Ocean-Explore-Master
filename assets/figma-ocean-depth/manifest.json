@@ -1,0 +1,134 @@
+{
+  "version": 1,
+  "source": {
+    "fileKey": "fUIT7yG4ZwYUvszbqGfr2y",
+    "fileName": "Deep Compare — Design System",
+    "pageId": "3:2",
+    "pageName": "08 — Graphics Library",
+    "masterNodeId": "53:172",
+    "masterNodeName": "Scene / Ocean Depth — Master",
+    "masterBounds": {
+      "width": 14931,
+      "height": 19963
+    }
+  },
+  "backgrounds": [
+    {
+      "name": "Sky Gradient",
+      "nodeId": "64:677",
+      "implementation": "css",
+      "css": "linear-gradient(-0.039368862674848515deg, rgb(201, 236, 238) 0.6165%, rgb(138, 212, 239) 73.52%, rgb(73, 169, 230) 99.727%)",
+      "figmaBounds": { "x": 0, "y": -0.46484375, "width": 14931, "height": 1143.3125 }
+    },
+    {
+      "name": "Ocean Gradient",
+      "nodeId": "53:174",
+      "implementation": "css",
+      "css": "linear-gradient(180deg, rgb(52, 198, 211) 0%, rgb(22, 138, 160) 7.6139%, rgb(11, 88, 116) 40.478%, rgb(7, 54, 79) 58.677%, rgb(3, 31, 49) 98.962%)",
+      "figmaBounds": { "x": -126.9765625, "y": 1152.57421875, "width": 15057.9765625, "height": 18810.08984375 }
+    }
+  ],
+  "assets": [
+    {
+      "path": "vectors/horizon-mountains.svg",
+      "format": "svg",
+      "nodeIds": ["67:1556"],
+      "usage": "Horizon mountain silhouette",
+      "figmaBounds": { "x": 385.5546569824219, "y": 932.4453125, "width": 1931.6370849609375, "height": 194.16326904296875 },
+      "exportSize": { "width": 1932, "height": 195 }
+    },
+    {
+      "path": "vectors/surface-waves.svg",
+      "format": "svg",
+      "nodeIds": ["62:514"],
+      "usage": "Repeated water-surface wave strip",
+      "figmaBounds": { "x": 783.0706787109375, "y": 1053.853515625, "width": 15712.6953125, "height": 455.015625 },
+      "exportSize": { "width": 14148, "height": 456 }
+    },
+    {
+      "path": "vectors/sun-rays.svg",
+      "format": "svg",
+      "nodeIds": ["69:1600"],
+      "usage": "Underwater sunlight ray overlay",
+      "figmaBounds": { "x": 252.890625, "y": 1100.140625, "width": 4072.751953125, "height": 2292.140869140625 },
+      "exportSize": { "width": 4073, "height": 2293 }
+    },
+    {
+      "path": "vectors/cliff.svg",
+      "format": "svg",
+      "nodeIds": ["60:421"],
+      "usage": "Primary descending left-side cliff",
+      "figmaBounds": { "x": -38.0078125, "y": 712.67578125, "width": 13169.525390625, "height": 20587.90234375 },
+      "exportSize": { "width": 13132, "height": 19251 }
+    },
+    {
+      "path": "vectors/fish-school.svg",
+      "format": "svg",
+      "nodeIds": ["71:1668", "71:1766", "71:1864"],
+      "usage": "One fish-school asset reused for left, center, and right instances",
+      "exportSize": { "width": 274, "height": 343 },
+      "instances": [
+        { "name": "left", "x": 1097.49609375, "y": 1282.60546875, "width": 274, "height": 343 },
+        { "name": "center", "x": 1388.20703125, "y": 1142.84765625, "width": 274, "height": 343 },
+        { "name": "right", "x": 1697.08984375, "y": 1274.203125, "width": 274, "height": 343 }
+      ]
+    },
+    {
+      "path": "vectors/bubbles.svg",
+      "format": "svg",
+      "nodeIds": ["71:1636"],
+      "usage": "Underwater bubble cluster",
+      "figmaBounds": { "x": 976.40234375, "y": 1086.140625, "width": 380, "height": 213 },
+      "exportSize": { "width": 380, "height": 213 }
+    },
+    {
+      "path": "vectors/island.svg",
+      "format": "svg",
+      "nodeIds": ["63:651"],
+      "usage": "Surface island and shoreline",
+      "figmaBounds": { "x": -303.08203125, "y": 344.23828125, "width": 1117, "height": 838 },
+      "exportSize": { "width": 814, "height": 838 }
+    },
+    {
+      "path": "raster/boat.png",
+      "format": "png",
+      "nodeIds": ["67:1592", "67:1593"],
+      "usage": "Boat artwork reused for two transformed instances",
+      "exportSize": { "width": 309, "height": 232 }
+    },
+    {
+      "path": "raster/icebergs.png",
+      "format": "png",
+      "nodeIds": ["64:678", "64:679"],
+      "usage": "Horizon iceberg strip reused twice",
+      "exportSize": { "width": 2172, "height": 724 }
+    },
+    {
+      "path": "raster/sun-glow.png",
+      "format": "png",
+      "nodeIds": ["67:1586"],
+      "usage": "Surface sun glow",
+      "exportSize": { "width": 271, "height": 271 }
+    },
+    {
+      "path": "raster/diver.png",
+      "format": "png",
+      "nodeIds": ["71:1964"],
+      "usage": "Small diver sprite",
+      "exportSize": { "width": 33, "height": 49 }
+    }
+  ],
+  "reference": {
+    "path": "reference/ocean-depth-master.png",
+    "format": "png",
+    "size": { "width": 898, "height": 1200 },
+    "usage": "Visual QA reference only; do not use as the website background"
+  },
+  "notes": [
+    "Use CSS gradients for sky and ocean backgrounds.",
+    "Reuse fish-school.svg for all three fish-school placements.",
+    "Reuse boat.png and icebergs.png for their duplicate transformed instances.",
+    "SVG exports use cropped content bounds; figmaBounds preserve original placement geometry.",
+    "The master reference image is intentionally downscaled for visual comparison."
+  ]
+}

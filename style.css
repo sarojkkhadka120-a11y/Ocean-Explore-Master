@@ -1,0 +1,629 @@
+/* ==========================================================================
+   Ocean Explore — Premium Aesthetics & Interactive Viewer Styling
+   ========================================================================== */
+
+:root {
+  --bg-deep: #020912;
+  --bg-surface: #061524;
+  --bg-card: rgba(6, 21, 36, 0.75);
+  --bg-card-hover: rgba(11, 34, 56, 0.85);
+  --border-subtle: rgba(0, 232, 255, 0.15);
+  --border-bright: rgba(0, 232, 255, 0.45);
+  
+  --cyan-core: #00e8ff;
+  --cyan-glow: rgba(0, 232, 255, 0.25);
+  --teal-ocean: #34c6d3;
+  --blue-abyss: #07364f;
+  --blue-midnight: #031f31;
+  --text-primary: #e6f6f8;
+  --text-secondary: #8ea8be;
+  --text-muted: #56728a;
+
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --header-height: 64px;
+  --waypoints-height: 48px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   Header / Top HUD
+   ========================================================================== */
+
+.hud-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background: linear-gradient(180deg, rgba(2, 9, 18, 0.92) 0%, rgba(2, 9, 18, 0.75) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.hud-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hud-pulse {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--cyan-core);
+  box-shadow: 0 0 12px var(--cyan-core);
+  animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(0.9);
+    box-shadow: 0 0 8px var(--cyan-core);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2);
+    box-shadow: 0 0 20px var(--cyan-core);
+    opacity: 1;
+  }
+}
+
+.hud-title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.hud-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, #ffffff 0%, var(--cyan-core) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hud-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+/* Telemetry Dashboard */
+.hud-telemetry {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 6px 18px;
+}
+
+.telemetry-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.telemetry-label {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.telemetry-value {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.zone-text {
+  color: var(--cyan-core);
+  min-width: 140px;
+}
+
+.depth-text {
+  color: #ffc83b;
+  min-width: 65px;
+}
+
+.mono-text {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  min-width: 120px;
+}
+
+.telemetry-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Actions */
+.hud-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.btn-icon, .btn-text, .btn-action {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-icon:hover, .btn-text:hover, .btn-action:hover {
+  background: rgba(0, 232, 255, 0.12);
+  color: var(--cyan-core);
+}
+
+.btn-action {
+  gap: 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 8px 14px;
+}
+
+.btn-action.active {
+  background: rgba(0, 232, 255, 0.2);
+  border-color: var(--cyan-core);
+  color: var(--cyan-core);
+  box-shadow: 0 0 12px var(--cyan-glow);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(0, 232, 255, 0.25) 0%, rgba(22, 138, 160, 0.35) 100%);
+  border: 1px solid var(--cyan-core);
+  border-radius: 8px;
+  color: var(--text-primary);
+  text-decoration: none;
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  box-shadow: 0 0 16px var(--cyan-glow);
+  transition: all 0.25s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, rgba(0, 232, 255, 0.45) 0%, rgba(22, 138, 160, 0.55) 100%);
+  box-shadow: 0 0 24px rgba(0, 232, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Waypoints Navigation Bar
+   ========================================================================== */
+
+.waypoints-bar {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  height: var(--waypoints-height);
+  background: rgba(2, 9, 18, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 232, 255, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 24px;
+  z-index: 990;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.waypoints-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.waypoints-title {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-right: 4px;
+  white-space: nowrap;
+}
+
+.waypoint-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 5px 14px;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.waypoint-pill small {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.waypoint-pill:hover {
+  background: rgba(0, 232, 255, 0.1);
+  border-color: rgba(0, 232, 255, 0.3);
+  color: var(--text-primary);
+}
+
+.waypoint-pill.active {
+  background: rgba(0, 232, 255, 0.18);
+  border-color: var(--cyan-core);
+  color: var(--cyan-core);
+  box-shadow: 0 0 12px var(--cyan-glow);
+}
+
+.waypoint-pill.active small {
+  color: rgba(0, 232, 255, 0.75);
+}
+
+/* ==========================================================================
+   2D Exploration Viewport Container
+   ========================================================================== */
+
+.exploration-container {
+  position: absolute;
+  top: calc(var(--header-height) + var(--waypoints-height));
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  cursor: grab;
+  outline: none;
+  background-color: #01111e;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-bright) rgba(2, 9, 18, 0.8);
+}
+
+.exploration-container:active {
+  cursor: grabbing;
+}
+
+/* Custom Scrollbars for 2D Exploration */
+.exploration-container::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.exploration-container::-webkit-scrollbar-track {
+  background: rgba(2, 9, 18, 0.85);
+}
+
+.exploration-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 232, 255, 0.3);
+  border-radius: 5px;
+  border: 2px solid rgba(2, 9, 18, 0.85);
+  transition: background 0.2s ease;
+}
+
+.exploration-container::-webkit-scrollbar-thumb:hover {
+  background: var(--cyan-core);
+  box-shadow: 0 0 10px var(--cyan-core);
+}
+
+.exploration-container::-webkit-scrollbar-corner {
+  background: rgba(2, 9, 18, 0.95);
+}
+
+/* Canvas Transform Wrapper */
+.canvas-transform-wrapper {
+  position: relative;
+  transform-origin: 0 0;
+  width: 14931px;
+  height: 19963px;
+  pointer-events: auto;
+}
+
+.ocean-svg-view {
+  width: 14931px;
+  height: 19963px;
+  display: block;
+  pointer-events: auto;
+}
+
+/* Interaction Hint */
+.interaction-hint {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  background: rgba(2, 9, 18, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 30px;
+  padding: 8px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  pointer-events: none;
+  z-index: 950;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  animation: fadeInHint 1s ease 1s forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInHint {
+  to { opacity: 1; }
+}
+
+.hint-icon {
+  color: var(--cyan-core);
+  font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   Radar Minimap (Bottom-Right Picture-in-Picture)
+   ========================================================================== */
+
+.radar-minimap {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 220px;
+  background: rgba(4, 15, 26, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border-bright);
+  border-radius: 14px;
+  padding: 12px;
+  z-index: 1000;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 20px rgba(0, 232, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.radar-minimap:hover {
+  border-color: var(--cyan-core);
+  transform: translateY(-2px);
+}
+
+.minimap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.minimap-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--cyan-core);
+  letter-spacing: 0.08em;
+}
+
+.radar-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--cyan-core);
+  box-shadow: 0 0 6px var(--cyan-core);
+  animation: radarPing 1.8s infinite ease-out;
+}
+
+@keyframes radarPing {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.minimap-coords {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+
+.minimap-viewport-container {
+  position: relative;
+  width: 100%;
+  height: 260px; /* Aspect ratio ~ 0.75 for 14931 x 19963 */
+  background: #010c16;
+  border: 1px solid rgba(0, 232, 255, 0.2);
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+.minimap-graphic {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Active Viewport Lens Box on Minimap */
+.minimap-lens {
+  position: absolute;
+  border: 2px solid var(--cyan-core);
+  background: rgba(0, 232, 255, 0.15);
+  box-shadow: 0 0 12px rgba(0, 232, 255, 0.4), inset 0 0 8px rgba(0, 232, 255, 0.2);
+  pointer-events: none;
+  border-radius: 2px;
+  transform: translate3d(0, 0, 0);
+  transition: width 0.05s ease, height 0.05s ease;
+}
+
+.lens-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  transform: translate(-50%, -50%);
+}
+
+.lens-crosshair::before, .lens-crosshair::after {
+  content: '';
+  position: absolute;
+  background: var(--cyan-core);
+}
+
+.lens-crosshair::before {
+  top: 2px;
+  left: -4px;
+  width: 14px;
+  height: 1px;
+}
+
+.lens-crosshair::after {
+  top: -4px;
+  left: 2px;
+  width: 1px;
+  height: 14px;
+}
+
+.minimap-scale {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  color: var(--text-muted);
+  padding: 0 2px;
+}
+
+/* ==========================================================================
+   Inspector Card / Hover Tooltip
+   ========================================================================== */
+
+.inspector-card {
+  position: fixed;
+  background: rgba(3, 15, 27, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--cyan-core);
+  border-radius: 10px;
+  padding: 12px 16px;
+  min-width: 220px;
+  z-index: 1050;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 16px var(--cyan-glow);
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.95) translateY(6px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.inspector-card.active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.inspector-badge {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--cyan-core);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.inspector-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.inspector-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 6px;
+}
+
+.inspector-stat {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.stat-label {
+  color: var(--text-muted);
+}
+
+.stat-val {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .hud-telemetry {
+    display: none;
+  }
+  .radar-minimap {
+    width: 170px;
+  }
+  .minimap-viewport-container {
+    height: 200px;
+  }
+}

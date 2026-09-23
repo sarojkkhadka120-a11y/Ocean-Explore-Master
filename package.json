@@ -1,0 +1,21 @@
+{
+  "name": "ocean-explore",
+  "version": "1.0.0",
+  "description": "Standalone SVG and 2D scrollable ocean exploration viewer for Figma node 53:172",
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 3000",
+    "dev": "python3 -m http.server 3000",
+    "build:svg": "node scripts/generate-standalone-svg.mjs",
+    "test": "node test/verify-svg.mjs"
+  },
+  "keywords": [
+    "figma",
+    "svg",
+    "ocean-explore",
+    "standalone-svg",
+    "2d-scrolling"
+  ],
+  "author": "",
+  "license": "ISC"
+}

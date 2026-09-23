@@ -4,6 +4,9 @@
 > **File:** `fUIT7yG4ZwYUvszbqGfr2y` | **Node:** `53-172` (`Scene / Ocean Depth — Master`)  
 > **Master Dimensions:** `14,931 px` width &times; `19,963 px` height
 
+🌐 **Live Demo:** [http://chitikka.me/Ocean-Explore-Master/](http://chitikka.me/Ocean-Explore-Master/)  
+📦 **GitHub Repository:** [https://github.com/sarojkkhadka120-a11y/Ocean-Explore-Master](https://github.com/sarojkkhadka120-a11y/Ocean-Explore-Master)
+
 ---
 
 ## 🌟 Highlights

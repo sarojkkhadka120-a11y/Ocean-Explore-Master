@@ -3,22 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>Ocean Explore — Master Canvas (Figma Node 53:172)</title>
-  <meta name="description" content="Interactive 2D horizontal and vertical ocean exploration viewer for the exact Figma 14931 x 19963 Master Scene.">
+  <title>Ocean Explore — Master Canvas & 0–10,000 m Asset Bible Experience</title>
+  <meta name="description" content="Explore the full 0–10,000 m ocean depth canvas with 54 audited species, habitats, submersibles, and RMS Titanic, adhering strictly to the Ocean Depth Asset Bible.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- App Header / Top HUD -->
+  <!-- =========================================================================
+       1. Top HUD / Telemetry Header (Layer 100)
+       ========================================================================= -->
   <header class="hud-header" id="hud-header">
     <div class="hud-brand">
       <div class="hud-pulse"></div>
       <div class="hud-title-group">
         <h1 class="hud-title">OCEAN EXPLORE</h1>
-        <span class="hud-badge">FIGMA NODE 53:172 &bull; 14,931 &times; 19,963 PX</span>
+        <span class="hud-badge">0–10,000 M &bull; ASSET BIBLE &bull; FIGMA 53:172</span>
       </div>
     </div>
 
@@ -26,7 +28,7 @@
     <div class="hud-telemetry">
       <div class="telemetry-item">
         <span class="telemetry-label">CURRENT ZONE</span>
-        <span class="telemetry-value zone-text" id="telemetry-zone">Surface &amp; Atmosphere</span>
+        <span class="telemetry-value zone-text" id="telemetry-zone">Epipelagic (Sunlight)</span>
       </div>
       <div class="telemetry-divider"></div>
       <div class="telemetry-item">
@@ -35,79 +37,158 @@
       </div>
       <div class="telemetry-divider"></div>
       <div class="telemetry-item">
-        <span class="telemetry-label">FIGMA COORDS</span>
+        <span class="telemetry-label">SCALE MODE</span>
+        <span class="telemetry-value mode-text" id="telemetry-scale-mode">Display Scale</span>
+      </div>
+      <div class="telemetry-divider"></div>
+      <div class="telemetry-item">
+        <span class="telemetry-label">COORDS</span>
         <span class="telemetry-value mono-text" id="telemetry-coords">X: 0 &bull; Y: 0</span>
       </div>
       <div class="telemetry-divider"></div>
       <div class="telemetry-item">
         <span class="telemetry-label">ZOOM</span>
-        <span class="telemetry-value mono-text" id="telemetry-zoom">10%</span>
+        <span class="telemetry-value mono-text" id="telemetry-zoom">50%</span>
       </div>
     </div>
 
     <!-- Actions & Controls -->
     <div class="hud-actions">
+      <!-- Scale System Toggle (Section 2 of Asset Bible) -->
+      <div class="scale-mode-group" title="Toggle Scale Mode: Display Scale (Titanic=100%) vs True Physical Scale (1:1 with Titanic 269m)">
+        <button class="btn-toggle active" id="btn-scale-display">Display Scale</button>
+        <button class="btn-toggle" id="btn-scale-physical">True Scale (1:1)</button>
+      </div>
+
+      <!-- Zone Filter Selector -->
+      <div class="filter-dropdown-group">
+        <select id="zone-filter-select" class="zone-select" title="Filter specimens by ocean depth zone" aria-label="Filter ocean zone">
+          <option value="all">All Zones (54 Assets)</option>
+          <option value="sunlight">Sunlight Zone (0–200m)</option>
+          <option value="twilight">Twilight Zone (200–1,000m)</option>
+          <option value="midnight">Midnight Zone (1,000–4,000m)</option>
+          <option value="abyssal">Abyssal Zone (4,000–6,000m)</option>
+          <option value="hadal">Hadal Zone (6,000–10,000m)</option>
+          <option value="vehicles">Vehicles &amp; Wrecks</option>
+        </select>
+      </div>
+
       <div class="zoom-controls">
         <button class="btn-icon" id="btn-zoom-out" title="Zoom Out" aria-label="Zoom Out">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         </button>
-        <button class="btn-text" id="btn-zoom-reset" title="Reset Zoom">Fit</button>
+        <button class="btn-text" id="btn-zoom-reset" title="Reset Zoom to Fit Canvas">Fit</button>
         <button class="btn-icon" id="btn-zoom-in" title="Zoom In" aria-label="Zoom In">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         </button>
-        <button class="btn-text" id="btn-zoom-100" title="1:1 Actual Figma Pixels">100%</button>
+        <button class="btn-text" id="btn-zoom-100" title="1:1 Actual Figma World Pixels">100%</button>
       </div>
 
-      <button class="btn-action" id="btn-toggle-inspector" title="Toggle Node Inspector">
+      <button class="btn-action" id="btn-toggle-inspector" title="Toggle Figma Layer Inspector">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         <span>Inspect</span>
       </button>
 
       <a href="ocean-scene.svg" download="ocean-scene-master-53-172.svg" class="btn-primary" id="btn-download" title="Download Standalone Master SVG">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-        <span>Standalone SVG</span>
+        <span>SVG</span>
       </a>
     </div>
   </header>
 
-  <!-- Waypoints Navigation Bar -->
-  <nav class="waypoints-bar" id="waypoints-bar" aria-label="Ocean Zones">
+  <!-- =========================================================================
+       2. Waypoints Navigation Bar (Layer 100)
+       ========================================================================= -->
+  <nav class="waypoints-bar" id="waypoints-bar" aria-label="Ocean Zones and Landmarks">
     <span class="waypoints-title">WAYPOINTS:</span>
     <button class="waypoint-pill active" data-x="1200" data-y="300" data-zoom="0.6">
-      ☀️ Surface &amp; Sky <small>(0m)</small>
+      ☀️ Surface <small>(0m)</small>
     </button>
-    <button class="waypoint-pill" data-x="1250" data-y="1250" data-zoom="1.2">
-      🤿 Diver &amp; Reef <small>(35m)</small>
+    <button class="waypoint-pill" data-x="2400" data-y="1220" data-zoom="0.8">
+      🤿 Coral Ledge <small>(35m)</small>
     </button>
-    <button class="waypoint-pill" data-x="2200" data-y="1800" data-zoom="0.4">
-      🌊 Sunlit Shallows <small>(150m)</small>
+    <button class="waypoint-pill" data-x="9800" data-y="1300" data-zoom="0.5">
+      🐋 Blue Whale <small>(80m)</small>
     </button>
-    <button class="waypoint-pill" data-x="3500" data-y="5500" data-zoom="0.25">
-      🧗 The Great Wall <small>(850m)</small>
+    <button class="waypoint-pill" data-x="6700" data-y="2200" data-zoom="0.7">
+      🐟 Barreleye <small>(560m)</small>
     </button>
-    <button class="waypoint-pill" data-x="4500" data-y="10500" data-zoom="0.2">
-      🌑 Midnight Trench <small>(3,200m)</small>
+    <button class="waypoint-pill" data-x="6200" data-y="2750" data-zoom="0.5">
+      🦑 Giant Squid <small>(850m)</small>
     </button>
-    <button class="waypoint-pill" data-x="6000" data-y="15500" data-zoom="0.18">
-      🌌 Abyssal Plain <small>(5,800m)</small>
+    <button class="waypoint-pill" data-x="5800" data-y="3410" data-zoom="0.7">
+      💡 Anglerfish <small>(1,200m)</small>
     </button>
-    <button class="waypoint-pill" data-x="8000" data-y="19000" data-zoom="0.16">
-      🕳️ Ocean Trench Bed <small>(10,000m)</small>
+    <button class="waypoint-pill" data-x="6300" data-y="5380" data-zoom="0.6">
+      🐙 Dumbo Octopus <small>(2,250m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="3800" data-y="7080" data-zoom="0.5">
+      🦴 Whale Fall <small>(3,150m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="6200" data-y="8300" data-zoom="0.35">
+      🚢 Titanic Wreck <small>(3,800m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="3400" data-y="9340" data-zoom="0.5">
+      🌋 Hydrothermal Vent <small>(4,350m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="7800" data-y="9520" data-zoom="0.6">
+      🐖 Sea Pigs <small>(4,450m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="7900" data-y="12150" data-zoom="0.5">
+      🛸 Shinkai 6500 <small>(5,850m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="6800" data-y="14320" data-zoom="0.6">
+      🐟 Hadal Snailfish <small>(7,000m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="7900" data-y="19580" data-zoom="0.5">
+      🛸 Full-Depth Sub <small>(9,800m)</small>
+    </button>
+    <button class="waypoint-pill" data-x="3300" data-y="18080" data-zoom="0.35">
+      🕳️ Trench Bed <small>(10,000m)</small>
     </button>
   </nav>
 
-  <!-- Main Exploration 2D Viewport -->
+  <!-- =========================================================================
+       3. Main Exploration 2D Viewport
+       ========================================================================= -->
   <main class="exploration-container" id="exploration-container" tabindex="0">
     <!-- SVG Canvas Wrapper -->
     <div class="canvas-transform-wrapper" id="canvas-wrapper">
-      <!-- Embedded Master SVG -->
+      <!-- Embedded Master SVG (Layers 0 & 20: Water & Terrain Rear) -->
       <object type="image/svg+xml" data="assets/ocean-scene.svg" id="ocean-svg-object" class="ocean-svg-view" aria-label="Ocean Depth Master Canvas"></object>
+
+      <!-- Multi-Layer Ocean Stage (Asset Bible Layers 10 through 90) -->
+      <div class="ocean-stage" id="ocean-stage">
+        <!-- Layer 10: Far Atmosphere (haze, distant silhouettes, faint marine snow) -->
+        <div class="ocean-layer layer-10" id="layer-10"></div>
+
+        <!-- Layer 30: Habitat (coral, kelp, vents, rocks, whale fall) -->
+        <div class="ocean-layer layer-30" id="layer-30"></div>
+
+        <!-- Layer 40: Large Background Life (blue whale, sperm whale, whale shark, giant squid) -->
+        <div class="ocean-layer layer-40" id="layer-40"></div>
+
+        <!-- Layer 50: Midground Life (most creatures and schools) -->
+        <div class="ocean-layer layer-50" id="layer-50"></div>
+
+        <!-- Layer 60: Landmark / Vehicle (Titanic, ROVs, landers, crewed submersibles) -->
+        <div class="ocean-layer layer-60" id="layer-60"></div>
+
+        <!-- Layer 70: Foreground Life (close parallax creatures) -->
+        <div class="ocean-layer layer-70" id="layer-70"></div>
+
+        <!-- Layer 80: Foreground Atmosphere (bubbles, silt plumes, dense marine snow) -->
+        <div class="ocean-layer layer-80" id="layer-80"></div>
+
+        <!-- Layer 90: Information UI (specimen labels, zone banners, leader anchors) -->
+        <div class="ocean-layer layer-90" id="layer-90"></div>
+      </div>
     </div>
 
     <!-- Drag / Pan Hint Overlay -->
     <div class="interaction-hint" id="interaction-hint">
       <span class="hint-icon">✥</span>
-      <span>Click &amp; Drag to Pan &bull; Scroll or Pinch to Zoom &bull; Use Minimap to Jump</span>
+      <span>Click &amp; Drag to Pan &bull; Wheel / Pinch to Zoom &bull; Click Any Specimen for Details &amp; Scale Comparison</span>
     </div>
 
     <!-- Inspector Tooltip / Hover Card -->
@@ -131,8 +212,10 @@
     </div>
   </main>
 
-  <!-- Minimap / Radar HUD -->
-  <aside class="radar-minimap" id="radar-minimap" title="Ocean Radar Minimap — Click to Jump">
+  <!-- =========================================================================
+       4. Minimap / Radar HUD (Layer 100)
+       ========================================================================= -->
+  <aside class="radar-minimap" id="radar-minimap" title="Ocean Radar Minimap — Click or Drag to Jump">
     <div class="minimap-header">
       <div class="minimap-tag">
         <span class="radar-dot"></span>
@@ -163,12 +246,19 @@
         <rect x="0" y="1152" width="14931" height="18811" fill="url(#mini-ocean)" />
         <!-- Mini Mountain Silhouette -->
         <polygon points="385,1126 1000,932 2317,1126" fill="#7ecae7" opacity="0.6" />
-        <!-- Mini Cliff Contour (Simplified) -->
+        <!-- Mini Cliff Contour -->
         <polygon points="-50,5433 1811,6202 3159,6860 3900,8373 4204,9718 4962,10130 5649,10564 6843,12902 8403,15735 10074,17126 12751,19207 -50,19207" fill="#062235" opacity="0.8" />
         <!-- Mini Island -->
         <polygon points="-303,1182 100,500 814,1182" fill="#023d54" />
         <!-- Mini Water Surface Line -->
-        <line x1="0" y1="1152" x2="14931" y2="1152" stroke="#00e8ff" stroke-width="120" opacity="0.8" />
+        <line x1="0" y1="1152" x2="14931" y2="1152" stroke="#00e8ff" stroke-width="140" opacity="0.8" />
+        
+        <!-- Minimap Landmark Markers -->
+        <circle cx="9800" cy="1303" r="160" fill="#00e8ff" opacity="0.9" /> <!-- Blue Whale -->
+        <circle cx="6200" cy="8300" r="280" fill="#f5a623" opacity="0.95" /> <!-- Titanic -->
+        <circle cx="3400" cy="9335" r="200" fill="#ff4d4d" opacity="0.9" /> <!-- Vents -->
+        <circle cx="7900" cy="12157" r="180" fill="#50e3c2" opacity="0.9" /> <!-- Shinkai -->
+        <circle cx="7900" cy="19587" r="180" fill="#bd10e0" opacity="0.9" /> <!-- Full-Depth -->
       </svg>
 
       <!-- Active Viewport Box Indicator -->
@@ -179,13 +269,89 @@
 
     <!-- Minimap Quick Depths -->
     <div class="minimap-scale">
-      <span>0 m (Surface)</span>
-      <span>1,000 m (Twilight)</span>
-      <span>4,000 m (Midnight)</span>
-      <span>10,000 m (Abyss)</span>
+      <span>0 m (Sunlight)</span>
+      <span>1,000 m (Midnight)</span>
+      <span>3,800 m (Titanic)</span>
+      <span>10,000 m (Trench Bed)</span>
     </div>
   </aside>
 
-  <script src="app.js"></script>
+  <!-- =========================================================================
+       5. Specimen Detail Modal (Layer 100)
+       ========================================================================= -->
+  <div class="specimen-modal-backdrop" id="specimen-modal-backdrop" aria-hidden="true">
+    <div class="specimen-modal" id="specimen-modal" role="dialog" aria-modal="true" aria-labelledby="modal-specimen-name">
+      <button class="modal-close-btn" id="modal-close-btn" aria-label="Close Specimen Details">&times;</button>
+      
+      <div class="modal-header">
+        <div class="modal-zone-badge" id="modal-zone-badge">BATHYPELAGIC &bull; MIDNIGHT ZONE</div>
+        <h2 class="modal-title" id="modal-specimen-name">Humpback Deep-Sea Anglerfish</h2>
+        <div class="modal-scientific" id="modal-scientific-name">Melanocetus johnsonii</div>
+      </div>
+
+      <div class="modal-body">
+        <!-- Visual Art Preview with Bioluminescent Glow -->
+        <div class="modal-art-box">
+          <div class="art-glow-ring"></div>
+          <img id="modal-art-img" src="" alt="Specimen Artwork" class="modal-art-image">
+          <div class="art-depth-chip" id="modal-depth-chip">1,200 m (3,937 ft)</div>
+        </div>
+
+        <!-- Scale Comparison System (Section 2 of Asset Bible) -->
+        <div class="modal-scale-section">
+          <div class="scale-section-header">
+            <span class="scale-title">SCALE SYSTEM (TITANIC = 100% / 269 M)</span>
+            <span class="scale-badge" id="modal-scale-badge">ENLARGED FOR VISIBILITY</span>
+          </div>
+
+          <!-- Comparative Scale Bar -->
+          <div class="scale-bars-container">
+            <div class="scale-bar-row">
+              <span class="bar-label">RMS Titanic (Master Reference):</span>
+              <div class="bar-track">
+                <div class="bar-fill titanic-bar" style="width: 100%;">269 m (100%)</div>
+              </div>
+            </div>
+            <div class="scale-bar-row">
+              <span class="bar-label" id="modal-specimen-bar-label">Specimen Real Physical Scale:</span>
+              <div class="bar-track">
+                <div class="bar-fill specimen-bar" id="modal-specimen-bar-fill" style="width: 0.1%;">0.1%</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scale-legend-grid">
+            <div class="legend-card">
+              <span class="legend-label">DISPLAY SCALE</span>
+              <span class="legend-val" id="modal-display-scale">6% of Titanic</span>
+            </div>
+            <div class="legend-card">
+              <span class="legend-label">TRUE PHYSICAL LENGTH</span>
+              <span class="legend-val" id="modal-physical-length">~18–20 cm (0.1%)</span>
+            </div>
+            <div class="legend-card">
+              <span class="legend-label">OBSERVED DEPTH RANGE</span>
+              <span class="legend-val" id="modal-depth-range">1,000–2,000 m</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Educational Narrative & Science -->
+        <div class="modal-description-section">
+          <h3 class="section-heading">BIOLOGICAL PROFILE &amp; ADAPTATIONS</h3>
+          <p class="modal-desc-text" id="modal-desc-text">Loading specimen profile...</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="modal-citation">Source: NOAA Ocean Exploration &bull; MBARI &bull; Woods Hole Oceanographic Institution</div>
+        <button class="btn-focus-specimen" id="btn-focus-specimen">Center in Ocean Viewport</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="ocean-asset-manifest.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

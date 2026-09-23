@@ -627,3 +627,650 @@ html, body {
     height: 200px;
   }
 }
+
+/* ==========================================================================
+   Asset Bible Multi-Layer Stage & Specimen Engine
+   ========================================================================== */
+
+/* Scale Mode Switcher in HUD */
+.scale-mode-group {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.btn-toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-toggle:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-toggle.active {
+  background: linear-gradient(135deg, rgba(0, 232, 255, 0.25) 0%, rgba(22, 138, 160, 0.4) 100%);
+  color: var(--cyan-core);
+  border: 1px solid rgba(0, 232, 255, 0.4);
+  box-shadow: 0 0 10px var(--cyan-glow);
+}
+
+.mode-text {
+  color: #50e3c2;
+  font-size: 0.8rem;
+  min-width: 95px;
+}
+
+/* Zone Filter Selector */
+.filter-dropdown-group {
+  display: flex;
+  align-items: center;
+}
+
+.zone-select {
+  background: rgba(4, 18, 30, 0.85);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 7px 12px;
+  border-radius: 8px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.zone-select:focus, .zone-select:hover {
+  border-color: var(--cyan-core);
+  box-shadow: 0 0 12px var(--cyan-glow);
+}
+
+.zone-select option {
+  background: #020e1a;
+  color: var(--text-primary);
+}
+
+/* Ocean Stage (14931 x 19963 px canvas overlay) */
+.ocean-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14931px;
+  height: 19963px;
+  transform-origin: 0 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* Layer Hierarchy per Section 3 of Asset Bible */
+.ocean-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.layer-10 { z-index: 10; } /* Far atmosphere (silhouettes, faint snow) */
+.layer-30 { z-index: 30; } /* Habitat (coral, kelp, vents, rocks, whale fall) */
+.layer-40 { z-index: 40; } /* Large background life (blue whale, sperm whale, squid) */
+.layer-50 { z-index: 50; } /* Midground life (turtles, sharks, anglerfish, etc.) */
+.layer-60 { z-index: 60; } /* Landmark / vehicle (Titanic, ROVs, submersibles) */
+.layer-70 { z-index: 70; } /* Foreground life */
+.layer-80 { z-index: 80; } /* Foreground atmosphere (bubbles, silt, dense snow) */
+.layer-90 { z-index: 90; } /* Information UI (specimen labels, zone banners) */
+
+/* Specimen Container */
+.ocean-specimen {
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+  transform-origin: center center;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+              filter 0.3s ease,
+              opacity 0.4s ease;
+  will-change: width, transform;
+}
+
+.ocean-specimen img.specimen-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.6));
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.ocean-specimen:hover img.specimen-img {
+  filter: drop-shadow(0 0 24px rgba(0, 232, 255, 0.85)) brightness(1.12);
+  transform: scale(1.02);
+}
+
+.ocean-specimen.flip img.specimen-img {
+  transform: scaleX(-1);
+}
+
+.ocean-specimen.flip:hover img.specimen-img {
+  transform: scaleX(-1) scale(1.02);
+}
+
+/* Dimmed State for Zone Filtering */
+.ocean-specimen.dimmed {
+  opacity: 0.22;
+  filter: grayscale(0.5);
+  pointer-events: none;
+}
+
+/* Bioluminescent Pulse Effects */
+.bioluminescent-pulse img.specimen-img {
+  animation: biolumGlow 3.5s infinite ease-in-out;
+}
+
+@keyframes biolumGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px rgba(0, 232, 255, 0.4)) brightness(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 28px rgba(0, 232, 255, 0.95)) drop-shadow(0 0 45px rgba(80, 227, 194, 0.6)) brightness(1.25);
+  }
+}
+
+/* Gentle Drift Animation for Jellies & Squids */
+.drifting-motion {
+  animation: floatingDrift 7s infinite ease-in-out;
+}
+
+@keyframes floatingDrift {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-24px) rotate(1.5deg);
+  }
+}
+
+/* Submersible Searchlight Beam Cones */
+.searchlight-cone {
+  position: absolute;
+  top: 50%;
+  left: 80%;
+  width: 900px;
+  height: 450px;
+  transform: translateY(-50%);
+  background: radial-gradient(ellipse at left center, rgba(220, 245, 255, 0.45) 0%, rgba(0, 232, 255, 0.15) 45%, rgba(0, 50, 90, 0) 75%);
+  clip-path: polygon(0% 42%, 100% 0%, 100% 100%, 0% 58%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  opacity: 0.85;
+  filter: blur(10px);
+}
+
+.ocean-specimen.flip .searchlight-cone {
+  left: auto;
+  right: 80%;
+  transform: translateY(-50%) scaleX(-1);
+}
+
+/* Marine Snow Atmospheric Tile */
+.marine-snow-drift {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-repeat: repeat;
+  background-size: 1536px 1024px;
+  opacity: 0.55;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: snowFall 40s linear infinite;
+}
+
+@keyframes snowFall {
+  0% { background-position: 0 0; }
+  100% { background-position: 200px 1024px; }
+}
+
+/* Silt Plume Cloud */
+.benthic-silt-plume {
+  position: absolute;
+  width: 1200px;
+  height: 600px;
+  opacity: 0.65;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  filter: blur(6px);
+  animation: siltPulse 12s infinite ease-in-out;
+}
+
+@keyframes siltPulse {
+  0%, 100% { transform: scale(0.96); opacity: 0.5; }
+  50% { transform: scale(1.05); opacity: 0.75; }
+}
+
+/* Specimen Callout Tags & Leaders (Layer 90) */
+.specimen-tag {
+  position: absolute;
+  bottom: -46px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(3, 18, 32, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-bright);
+  border-radius: 20px;
+  padding: 5px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 10px var(--cyan-glow);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+
+.specimen-tag:hover {
+  background: rgba(0, 232, 255, 0.22);
+  border-color: var(--cyan-core);
+  color: var(--cyan-core);
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 6px 22px rgba(0, 232, 255, 0.5);
+}
+
+.tag-depth {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: #ffc83b;
+  font-weight: 500;
+}
+
+.tag-scale-badge {
+  font-size: 0.62rem;
+  color: #50e3c2;
+  background: rgba(80, 227, 194, 0.15);
+  border-radius: 10px;
+  padding: 1px 6px;
+}
+
+/* Reticle Beacon for Microscopic True Scale */
+.true-scale-active .ocean-specimen.microscopic-true-scale::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  transform: translate(-50%, -50%);
+  border: 2px dashed #ffc83b;
+  border-radius: 50%;
+  animation: radarPing 2s infinite ease-out;
+  pointer-events: none;
+}
+
+/* Zone Divider Banners across the canvas (Layer 90) */
+.zone-boundary-banner {
+  position: absolute;
+  left: 3200px;
+  right: 600px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.banner-line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0, 232, 255, 0.8) 0%, rgba(0, 232, 255, 0.2) 80%, transparent 100%);
+  box-shadow: 0 0 12px var(--cyan-core);
+}
+
+.banner-pill {
+  background: rgba(2, 12, 22, 0.92);
+  border: 1px solid var(--cyan-core);
+  border-radius: 24px;
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 0 24px var(--cyan-glow);
+}
+
+.banner-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--cyan-core);
+}
+
+.banner-depth {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #ffc83b;
+}
+
+/* ==========================================================================
+   Specimen Detail Modal (Layer 100)
+   ========================================================================== */
+
+.specimen-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(1, 8, 16, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.specimen-modal-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.specimen-modal {
+  position: relative;
+  width: 90%;
+  max-width: 680px;
+  max-height: 88vh;
+  background: linear-gradient(180deg, rgba(6, 23, 40, 0.96) 0%, rgba(2, 11, 20, 0.98) 100%);
+  border: 1px solid var(--cyan-core);
+  border-radius: 18px;
+  padding: 30px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 232, 255, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  transform: scale(0.95) translateY(12px);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.specimen-modal-backdrop.active .specimen-modal {
+  transform: scale(1) translateY(0);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  background: transparent;
+  border: none;
+  font-size: 1.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  color: var(--cyan-core);
+  transform: scale(1.15);
+}
+
+.modal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modal-zone-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--cyan-core);
+}
+
+.modal-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.modal-scientific {
+  font-size: 0.92rem;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.modal-art-box {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  background: radial-gradient(circle at center, rgba(14, 46, 74, 0.6) 0%, rgba(2, 10, 18, 0.8) 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.art-glow-ring {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 232, 255, 0.35) 0%, transparent 70%);
+  filter: blur(20px);
+}
+
+.modal-art-image {
+  position: relative;
+  max-width: 80%;
+  max-height: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.7));
+}
+
+.art-depth-chip {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 200, 59, 0.5);
+  color: #ffc83b;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* Modal Scale Section */
+.modal-scale-section {
+  background: rgba(2, 12, 22, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.scale-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scale-title {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.scale-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: rgba(255, 200, 59, 0.18);
+  color: #ffc83b;
+  border: 1px solid rgba(255, 200, 59, 0.4);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.scale-bars-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scale-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bar-label {
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+}
+
+.bar-track {
+  width: 100%;
+  height: 22px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bar-fill {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: width 0.6s ease;
+}
+
+.bar-fill.titanic-bar {
+  background: linear-gradient(90deg, #5b7996 0%, #8ba7c2 100%);
+  color: #020b14;
+}
+
+.bar-fill.specimen-bar {
+  background: linear-gradient(90deg, #00e8ff 0%, #50e3c2 100%);
+  color: #020b14;
+  min-width: 18px;
+}
+
+.scale-legend-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
+}
+
+.legend-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.legend-label {
+  font-size: 0.64rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.legend-val {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Modal Description */
+.modal-description-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-heading {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--cyan-core);
+}
+
+.modal-desc-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 16px;
+}
+
+.modal-citation {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.btn-focus-specimen {
+  background: linear-gradient(135deg, rgba(0, 232, 255, 0.25) 0%, rgba(22, 138, 160, 0.4) 100%);
+  border: 1px solid var(--cyan-core);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-focus-specimen:hover {
+  background: linear-gradient(135deg, rgba(0, 232, 255, 0.45) 0%, rgba(22, 138, 160, 0.6) 100%);
+  box-shadow: 0 0 16px var(--cyan-glow);
+}
+

@@ -1,29 +1,51 @@
 /**
- * Ocean Explore — Master Canvas Interactive 2D Navigation Engine
+ * Ocean Explore — Master Canvas & 0–10,000 m Asset Bible Navigation Engine
  * Coordinates & Dimensions: 14,931 px × 19,963 px (Figma Master Node 53:172)
+ * Strictly adhering to the Ocean Depth Asset Bible Specification.
  */
+
+import OceanAssetManifest from './ocean-asset-manifest.js';
 
 (function () {
   'use strict';
 
   // Constants & World Geometry
-  const WORLD_WIDTH = 14931;
-  const WORLD_HEIGHT = 19963;
-  const WATER_LINE_Y = 1152.57;
-  const MAX_OCEAN_DEPTH_METERS = 10928; // Challenger Deep
+  const WORLD_WIDTH = OceanAssetManifest.WORLD_WIDTH_PX || 14931;
+  const WORLD_HEIGHT = OceanAssetManifest.WORLD_HEIGHT_PX || 19963;
+  const WATER_LINE_Y = OceanAssetManifest.WATER_LINE_Y_PX || 1152.57;
+  const MAX_OCEAN_DEPTH_METERS = OceanAssetManifest.MAX_OCEAN_DEPTH_M || 10000;
 
   // DOM Elements
   const container = document.getElementById('exploration-container');
   const canvasWrapper = document.getElementById('canvas-wrapper');
   const svgObject = document.getElementById('ocean-svg-object');
+  const oceanStage = document.getElementById('ocean-stage');
+
+  // Layer containers (per Section 3 of Asset Bible)
+  const layer10 = document.getElementById('layer-10'); // Far atmosphere
+  const layer30 = document.getElementById('layer-30'); // Habitat
+  const layer40 = document.getElementById('layer-40'); // Large background life
+  const layer50 = document.getElementById('layer-50'); // Midground life
+  const layer60 = document.getElementById('layer-60'); // Landmark / vehicle
+  const layer70 = document.getElementById('layer-70'); // Foreground life
+  const layer80 = document.getElementById('layer-80'); // Foreground atmosphere
+  const layer90 = document.getElementById('layer-90'); // Information UI
 
   // Telemetry HUD Elements
   const telemetryZone = document.getElementById('telemetry-zone');
   const telemetryDepth = document.getElementById('telemetry-depth');
   const telemetryCoords = document.getElementById('telemetry-coords');
   const telemetryZoom = document.getElementById('telemetry-zoom');
+  const telemetryScaleMode = document.getElementById('telemetry-scale-mode');
 
-  // Controls
+  // Scale Mode Switcher
+  const btnScaleDisplay = document.getElementById('btn-scale-display');
+  const btnScalePhysical = document.getElementById('btn-scale-physical');
+
+  // Zone Filter
+  const zoneFilterSelect = document.getElementById('zone-filter-select');
+
+  // Zoom & Action Controls
   const btnZoomIn = document.getElementById('btn-zoom-in');
   const btnZoomOut = document.getElementById('btn-zoom-out');
   const btnZoomReset = document.getElementById('btn-zoom-reset');
@@ -43,6 +65,23 @@
   const inspectorSize = document.getElementById('inspector-size');
   const inspectorType = document.getElementById('inspector-type');
 
+  // Specimen Detail Modal Elements
+  const specimenModalBackdrop = document.getElementById('specimen-modal-backdrop');
+  const modalCloseBtn = document.getElementById('modal-close-btn');
+  const modalZoneBadge = document.getElementById('modal-zone-badge');
+  const modalSpecimenName = document.getElementById('modal-specimen-name');
+  const modalScientificName = document.getElementById('modal-scientific-name');
+  const modalArtImg = document.getElementById('modal-art-img');
+  const modalDepthChip = document.getElementById('modal-depth-chip');
+  const modalScaleBadge = document.getElementById('modal-scale-badge');
+  const modalSpecimenBarLabel = document.getElementById('modal-specimen-bar-label');
+  const modalSpecimenBarFill = document.getElementById('modal-specimen-bar-fill');
+  const modalDisplayScale = document.getElementById('modal-display-scale');
+  const modalPhysicalLength = document.getElementById('modal-physical-length');
+  const modalDepthRange = document.getElementById('modal-depth-range');
+  const modalDescText = document.getElementById('modal-desc-text');
+  const btnFocusSpecimen = document.getElementById('btn-focus-specimen');
+
   // Waypoints
   const waypoints = document.querySelectorAll('.waypoint-pill');
 
@@ -59,7 +98,10 @@
   let isMinimapDragging = false;
   let inspectorActive = false;
 
-  // Layer metadata for Inspector
+  let currentScaleMode = 'display'; // 'display' | 'physical'
+  let activeModalSpecimen = null;
+
+  // Base Figma Layer metadata for Inspector
   const LAYER_REGISTRY = {
     'node-64-677': { name: 'Sky Gradient', nodeId: '64:677', type: 'Background', x: 0, y: 0, w: 14931, h: 1143 },
     'node-53-174': { name: 'Ocean Depth Gradient', nodeId: '53:174', type: 'Background', x: -127, y: 1153, w: 15058, h: 18810 },
@@ -80,6 +122,172 @@
     'node-71-1636': { name: 'Reef Bubble Column', nodeId: '71:1636', type: 'Particle Effect', x: 976, y: 1086, w: 380, h: 213 },
     'node-71-1964': { name: 'Scuba Diver Character', nodeId: '71:1964', type: 'Explorer Character', x: 1141, y: 1247, w: 32, h: 49 },
   };
+
+  /**
+   * Helper to return an appropriate emoji for a specimen
+   */
+  function getSpecimenEmoji(asset) {
+    if (asset.id.includes('whale')) return '🐋';
+    if (asset.id.includes('turtle')) return '🐢';
+    if (asset.id.includes('shark')) return '🦈';
+    if (asset.id.includes('squid') || asset.id.includes('octopus')) return '🦑';
+    if (asset.id.includes('jelly')) return '🪼';
+    if (asset.id.includes('dolphin')) return '🐬';
+    if (asset.id.includes('titanic')) return '🚢';
+    if (asset.id.includes('lander') || asset.id.includes('submersible') || asset.id.includes('rov')) return '🛸';
+    if (asset.id.includes('vent')) return '🌋';
+    if (asset.id.includes('coral') || asset.id.includes('kelp') || asset.id.includes('sponge')) return '🪸';
+    return '🐟';
+  }
+
+  /**
+   * Initialize and Render All 54 Asset Bible Specimens
+   */
+  function renderAssetBibleStage() {
+    const layerMap = {
+      10: layer10,
+      30: layer30,
+      40: layer40,
+      50: layer50,
+      60: layer60,
+      70: layer70,
+      80: layer80,
+    };
+
+    // 1. Render Zone Boundary Banners across Layer 90
+    const ZONE_BANNERS = [
+      { depth: 0, title: 'EPIPELAGIC ZONE (SUNLIGHT ZONE)', range: '0 m – 200 m (Surface to 656 ft)', desc: '100% of photosynthesizing marine life' },
+      { depth: 200, title: 'MESOPELAGIC ZONE (TWILIGHT ZONE)', range: '200 m – 1,000 m (656 to 3,280 ft)', desc: 'Faint blue twilight & daily vertical migration' },
+      { depth: 1000, title: 'BATHYPELAGIC ZONE (MIDNIGHT ZONE)', range: '1,000 m – 4,000 m (3,280 to 13,123 ft)', desc: 'Absolute darkness & intense bioluminescent lures' },
+      { depth: 4000, title: 'ABYSSOPELAGIC ZONE (THE ABYSSAL PLAIN)', range: '4,000 m – 6,000 m (13,123 to 19,685 ft)', desc: 'Freezing temperatures & crushing hydrostatic pressure' },
+      { depth: 6000, title: 'HADOPELAGIC ZONE (THE DEEP TRENCHES)', range: '6,000 m – 10,000 m (19,685 to 32,808 ft)', desc: 'Challenger Deep & tectonic subduction fault lines' },
+      { depth: 10000, title: 'OCEAN TRENCH BED & CHALLENGER DEEP', range: '10,000 m (32,808 ft floor)', desc: 'The deepest known point on Earth' },
+    ];
+
+    ZONE_BANNERS.forEach((zb) => {
+      const bannerY = OceanAssetManifest.depthToWorldY(zb.depth);
+      const banner = document.createElement('div');
+      banner.className = 'zone-boundary-banner';
+      banner.style.top = `${Math.round(bannerY)}px`;
+      banner.innerHTML = `
+        <div class="banner-pill">
+          <span class="banner-title">${zb.title}</span>
+          <span class="banner-depth">${zb.range}</span>
+        </div>
+        <div class="banner-line"></div>
+      `;
+      layer90.appendChild(banner);
+    });
+
+    // 2. Render Marine Snow Atmospheric Effects
+    const snowSparse = document.createElement('div');
+    snowSparse.className = 'marine-snow-drift';
+    snowSparse.style.top = `${Math.round(OceanAssetManifest.depthToWorldY(800))}px`;
+    snowSparse.style.height = `${Math.round(OceanAssetManifest.depthToWorldY(10000) - OceanAssetManifest.depthToWorldY(800))}px`;
+    snowSparse.style.backgroundImage = 'url("ocean/generated/effects/marine-snow-sparse.png"), url("generated/effects/marine-snow-sparse.png")';
+    layer10.appendChild(snowSparse);
+
+    const snowDense = document.createElement('div');
+    snowDense.className = 'marine-snow-drift';
+    snowDense.style.top = `${Math.round(OceanAssetManifest.depthToWorldY(3500))}px`;
+    snowDense.style.height = `${Math.round(OceanAssetManifest.depthToWorldY(10000) - OceanAssetManifest.depthToWorldY(3500))}px`;
+    snowDense.style.backgroundImage = 'url("ocean/generated/effects/marine-snow-dense.png"), url("generated/effects/marine-snow-dense.png")';
+    snowDense.style.opacity = '0.7';
+    layer80.appendChild(snowDense);
+
+    // 3. Render Each Production Asset
+    OceanAssetManifest.assets.forEach((asset) => {
+      // Atmospheric effects already placed or tile-based
+      if (asset.file === 'marine-snow-sparse.png' || asset.file === 'marine-snow-dense.png') {
+        return;
+      }
+
+      const targetLayer = layerMap[asset.layer] || layer50;
+
+      // Specimen Container
+      const specimenElem = document.createElement('div');
+      specimenElem.className = `ocean-specimen layer-${asset.layer}`;
+      specimenElem.id = `specimen-${asset.id}`;
+      specimenElem.dataset.assetId = asset.id;
+      specimenElem.dataset.zone = asset.zone;
+      specimenElem.dataset.category = asset.category;
+
+      specimenElem.style.left = `${asset.worldX}px`;
+      specimenElem.style.top = `${asset.worldY}px`;
+      specimenElem.style.width = `${asset.worldWidth}px`;
+
+      // Direction Mirror
+      if (asset.mirror) {
+        specimenElem.classList.add('flip');
+      }
+
+      // Bioluminescence
+      const isBiolum = ['anglerfish', 'lanternfish-school', 'comb-jelly', 'siphonophore', 'dragonfish'].includes(asset.id);
+      if (isBiolum) {
+        specimenElem.classList.add('bioluminescent-pulse');
+      }
+
+      // Floating drift animation for pelagic gelatinous species
+      const isDrifter = ['moon-jelly-group', 'comb-jelly', 'vampire-squid', 'dumbo-octopus', 'abyssal-sea-cucumber', 'hadal-sea-cucumber'].includes(asset.id);
+      if (isDrifter) {
+        specimenElem.classList.add('drifting-motion');
+      }
+
+      // Silt plume effect
+      if (asset.id === 'silt-cloud') {
+        specimenElem.classList.add('benthic-silt-plume');
+      }
+
+      // Submersible Searchlight Cone
+      const hasHeadlight = ['scientific-rov', 'shinkai-style-submersible', 'full-depth-submersible', 'research-submersible'].includes(asset.id);
+      if (hasHeadlight) {
+        const headlight = document.createElement('div');
+        headlight.className = 'searchlight-cone';
+        specimenElem.appendChild(headlight);
+      }
+
+      // Main Artwork Image
+      const img = document.createElement('img');
+      img.src = asset.src;
+      img.alt = asset.name;
+      img.className = 'specimen-img';
+      img.loading = 'lazy';
+      img.onerror = () => {
+        img.src = asset.fallbackSrc;
+      };
+      specimenElem.appendChild(img);
+
+      // Click to open Specimen Modal
+      specimenElem.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openSpecimenModal(asset);
+      });
+
+      targetLayer.appendChild(specimenElem);
+
+      // Specimen Callout Tag (Layer 90) for all informative entities
+      if (asset.category !== 'effect') {
+        const tag = document.createElement('div');
+        tag.className = 'specimen-tag';
+        tag.dataset.assetId = asset.id;
+        tag.style.left = `${asset.worldX + asset.worldWidth / 2}px`;
+        tag.style.top = `${asset.worldY + Math.max(80, asset.worldWidth * 0.65)}px`;
+
+        tag.innerHTML = `
+          <span>${getSpecimenEmoji(asset)} ${asset.name}</span>
+          <span class="tag-depth">${asset.displayDepthM.toLocaleString()} m</span>
+          ${asset.enlargedForVisibility ? '<span class="tag-scale-badge">Enlarged</span>' : ''}
+        `;
+
+        tag.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openSpecimenModal(asset);
+        });
+
+        layer90.appendChild(tag);
+      }
+    });
+  }
 
   /**
    * Apply Zoom & Update Canvas Scale
@@ -111,6 +319,11 @@
     svgObject.style.width = `${WORLD_WIDTH * currentZoom}px`;
     svgObject.style.height = `${WORLD_HEIGHT * currentZoom}px`;
 
+    // Scale ocean stage overlay in sync
+    if (oceanStage) {
+      oceanStage.style.transform = `scale(${currentZoom})`;
+    }
+
     // Recalculate new scroll positions to keep anchor point stationary
     const newScrollLeft = worldFocusX * currentZoom - focusX;
     const newScrollTop = worldFocusY * currentZoom - focusY;
@@ -135,7 +348,7 @@
 
     const submergedY = worldY - WATER_LINE_Y;
     const maxSubmerged = WORLD_HEIGHT - WATER_LINE_Y;
-    const depthMeters = Math.round((submergedY / maxSubmerged) * MAX_OCEAN_DEPTH_METERS);
+    const depthMeters = Math.min(10000, Math.round((submergedY / maxSubmerged) * MAX_OCEAN_DEPTH_METERS));
 
     let zoneName = 'Epipelagic (Sunlight Zone)';
     if (depthMeters > 200 && depthMeters <= 1000) {
@@ -145,7 +358,7 @@
     } else if (depthMeters > 4000 && depthMeters <= 6000) {
       zoneName = 'Abyssopelagic (The Abyss)';
     } else if (depthMeters > 6000) {
-      zoneName = 'Hadopelagic (Ocean Trenches)';
+      zoneName = 'Hadopelagic (The Trenches)';
     }
 
     return { depthMeters, zoneName };
@@ -209,6 +422,9 @@
       canvasWrapper.style.height = `${WORLD_HEIGHT * currentZoom}px`;
       svgObject.style.width = `${WORLD_WIDTH * currentZoom}px`;
       svgObject.style.height = `${WORLD_HEIGHT * currentZoom}px`;
+      if (oceanStage) {
+        oceanStage.style.transform = `scale(${currentZoom})`;
+      }
     }
 
     const vW = container.clientWidth;
@@ -243,6 +459,139 @@
     flyToWorldPosition(targetWorldX, targetWorldY);
   }
 
+  /**
+   * Scale Mode Switcher (Section 2 of Asset Bible)
+   */
+  function setScaleMode(mode) {
+    currentScaleMode = mode;
+    const isPhysical = mode === 'physical';
+
+    btnScaleDisplay.classList.toggle('active', !isPhysical);
+    btnScalePhysical.classList.toggle('active', isPhysical);
+    document.body.classList.toggle('true-scale-active', isPhysical);
+
+    telemetryScaleMode.textContent = isPhysical ? 'True Scale (1:1)' : 'Display Scale';
+    telemetryScaleMode.style.color = isPhysical ? '#ffc83b' : '#50e3c2';
+
+    OceanAssetManifest.assets.forEach((asset) => {
+      const elem = document.getElementById(`specimen-${asset.id}`);
+      if (!elem) return;
+
+      if (isPhysical && asset.physicalWidth !== null) {
+        elem.style.width = `${asset.physicalWidth}px`;
+        if (asset.physicalScalePct < 0.2) {
+          elem.classList.add('microscopic-true-scale');
+        }
+      } else {
+        elem.style.width = `${asset.worldWidth}px`;
+        elem.classList.remove('microscopic-true-scale');
+      }
+    });
+  }
+
+  btnScaleDisplay.addEventListener('click', () => setScaleMode('display'));
+  btnScalePhysical.addEventListener('click', () => setScaleMode('physical'));
+
+  /**
+   * Zone Filter Selection
+   */
+  zoneFilterSelect.addEventListener('change', () => {
+    const selected = zoneFilterSelect.value;
+    let firstMatchingAsset = null;
+
+    OceanAssetManifest.assets.forEach((asset) => {
+      const elem = document.getElementById(`specimen-${asset.id}`);
+      if (!elem) return;
+
+      let match = false;
+      if (selected === 'all') {
+        match = true;
+      } else if (selected === 'vehicles') {
+        match = asset.category === 'vehicle' || asset.category === 'landmark';
+      } else {
+        match = asset.zone === selected;
+      }
+
+      elem.classList.toggle('dimmed', !match);
+      if (match && !firstMatchingAsset) {
+        firstMatchingAsset = asset;
+      }
+    });
+
+    if (firstMatchingAsset) {
+      flyToWorldPosition(firstMatchingAsset.worldX, firstMatchingAsset.worldY, Math.max(0.4, currentZoom));
+    }
+  });
+
+  /**
+   * Open Specimen Detail Modal
+   */
+  function openSpecimenModal(asset) {
+    activeModalSpecimen = asset;
+
+    modalZoneBadge.textContent = `${asset.zone.toUpperCase()} ZONE • DEPTH: ${asset.displayDepthM.toLocaleString()} M`;
+    modalSpecimenName.textContent = asset.name;
+    modalScientificName.textContent = asset.scientificName;
+    modalArtImg.src = asset.src;
+    modalArtImg.alt = asset.name;
+    modalDepthChip.textContent = `${asset.displayDepthM.toLocaleString()} m (~${Math.round(asset.displayDepthM * 3.28084).toLocaleString()} ft)`;
+
+    // Scale system values
+    modalDisplayScale.textContent = `${asset.displayScalePct}% of Titanic`;
+    modalPhysicalLength.textContent = asset.realSizeDesc;
+    modalDepthRange.textContent = asset.depthRange;
+
+    // Comparative Scale Bars
+    if (asset.physicalScalePct !== null) {
+      modalSpecimenBarLabel.textContent = `Specimen Real Scale (${asset.physicalScalePct}% of Titanic length):`;
+      modalSpecimenBarFill.style.width = `${Math.max(0.6, Math.min(100, asset.physicalScalePct))}%`;
+      modalSpecimenBarFill.textContent = `${asset.physicalScalePct}%`;
+    } else {
+      modalSpecimenBarLabel.textContent = `Environment Module Size (${asset.displayScalePct}% relative to Titanic):`;
+      modalSpecimenBarFill.style.width = `${Math.max(1, Math.min(100, asset.displayScalePct))}%`;
+      modalSpecimenBarFill.textContent = `${asset.displayScalePct}%`;
+    }
+
+    if (asset.enlargedForVisibility) {
+      modalScaleBadge.textContent = `ENLARGED ${Math.round(asset.displayScalePct / asset.physicalScalePct)}× FOR VISIBILITY`;
+      modalScaleBadge.style.display = 'inline-block';
+    } else {
+      modalScaleBadge.textContent = asset.physicalScalePct ? 'PROPORTIONAL SCALE' : 'ENVIRONMENT MODULE';
+      modalScaleBadge.style.display = 'inline-block';
+    }
+
+    modalDescText.textContent = asset.description;
+
+    specimenModalBackdrop.classList.add('active');
+    specimenModalBackdrop.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeSpecimenModal() {
+    specimenModalBackdrop.classList.remove('active');
+    specimenModalBackdrop.setAttribute('aria-hidden', 'true');
+    activeModalSpecimen = null;
+  }
+
+  modalCloseBtn.addEventListener('click', closeSpecimenModal);
+  specimenModalBackdrop.addEventListener('click', (e) => {
+    if (e.target === specimenModalBackdrop) {
+      closeSpecimenModal();
+    }
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && specimenModalBackdrop.classList.contains('active')) {
+      closeSpecimenModal();
+    }
+  });
+
+  btnFocusSpecimen.addEventListener('click', () => {
+    if (!activeModalSpecimen) return;
+    const asset = activeModalSpecimen;
+    closeSpecimenModal();
+    flyToWorldPosition(asset.worldX + asset.worldWidth / 2, asset.worldY + 100, Math.max(0.55, currentZoom));
+  });
+
   // ==========================================================================
   // Event Listeners: Container Panning & Scrolling
   // ==========================================================================
@@ -254,7 +603,7 @@
 
   // Mouse Drag to Pan
   container.addEventListener('mousedown', (e) => {
-    if (e.target.closest('#hud-header') || e.target.closest('#radar-minimap') || e.target.closest('#waypoints-bar')) return;
+    if (e.target.closest('#hud-header') || e.target.closest('#radar-minimap') || e.target.closest('#waypoints-bar') || e.target.closest('.specimen-modal')) return;
     isDragging = true;
     startX = e.clientX;
     startY = e.clientY;
@@ -334,33 +683,23 @@
     touchStartDist = 0;
   });
 
-  // ==========================================================================
   // Minimap Interaction Listeners
-  // ==========================================================================
-
   minimapContainer.addEventListener('mousedown', (e) => {
     isMinimapDragging = true;
     handleMinimapInteraction(e);
   });
 
-  // ==========================================================================
   // Zoom Controls
-  // ==========================================================================
-
   btnZoomIn.addEventListener('click', () => applyZoom(currentZoom * 1.35));
   btnZoomOut.addEventListener('click', () => applyZoom(currentZoom / 1.35));
   btnZoom100.addEventListener('click', () => applyZoom(1.0));
 
   btnZoomReset.addEventListener('click', () => {
-    // Fit canvas height to container
     const fitZoom = (container.clientHeight - 40) / WORLD_HEIGHT;
     applyZoom(Math.max(MIN_ZOOM, fitZoom));
   });
 
-  // ==========================================================================
   // Waypoint Buttons
-  // ==========================================================================
-
   waypoints.forEach((btn) => {
     btn.addEventListener('click', () => {
       waypoints.forEach((b) => b.classList.remove('active'));
@@ -374,10 +713,7 @@
     });
   });
 
-  // ==========================================================================
   // Node Inspector Mode
-  // ==========================================================================
-
   btnToggleInspector.addEventListener('click', () => {
     inspectorActive = !inspectorActive;
     btnToggleInspector.classList.toggle('active', inspectorActive);
@@ -397,7 +733,7 @@
 
       elem.style.cursor = 'pointer';
 
-      elem.addEventListener('mouseenter', (e) => {
+      elem.addEventListener('mouseenter', () => {
         if (!inspectorActive) return;
         inspectorTitle.textContent = meta.name;
         inspectorNodeId.textContent = meta.nodeId;
@@ -420,23 +756,26 @@
         inspectorCard.classList.remove('active');
       });
 
-      // Quick click to jump / inspect
       elem.addEventListener('click', () => {
         flyToWorldPosition(meta.x + meta.w / 2, meta.y + meta.h / 2, Math.max(0.4, currentZoom));
       });
     });
   });
 
-  // ==========================================================================
-  // Initialization
-  // ==========================================================================
-
+  // Window Resize
   window.addEventListener('resize', () => {
     updateTelemetry();
     updateMinimap();
   });
 
-  // Initialize at opening frame (Surface & Diver view: X=1200, Y=800, Zoom=0.5)
+  // ==========================================================================
+  // Initialization & Boot
+  // ==========================================================================
+
+  // 1. Render all 54 specimens and layers
+  renderAssetBibleStage();
+
+  // 2. Initialize opening frame at Surface & Diver view (X=1200, Y=800, Zoom=0.5)
   setTimeout(() => {
     applyZoom(0.5);
     flyToWorldPosition(1200, 800, 0.5);

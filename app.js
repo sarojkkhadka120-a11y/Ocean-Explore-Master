@@ -330,7 +330,30 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
 
 
   /**
-   * Jump to Specific World Position
+   * Continental Shelf Cliff Profile (maxX coordinate at depth Y)
+   * Derived from Figma Master Cliff vector (node 60:421).
+   */
+  function getCliffEdgeX(worldY) {
+    if (worldY <= 1500) return 1250;
+    if (worldY <= 3000) return 1250 + ((worldY - 1500) / 1500) * 700;   // 1250 -> 1950 px
+    if (worldY <= 8500) return 1950 + ((worldY - 3000) / 5500) * 2800;  // 1950 -> 4750 px
+    if (worldY <= 12500) return 4750 + ((worldY - 8500) / 4000) * 1550; // 4750 -> 6300 px
+    if (worldY <= 19963) return 6300 + ((worldY - 12500) / 7463) * 6800; // 6300 -> 13100 px
+    return 13100;
+  }
+
+  /**
+   * Compute Ideal Zoom so that the surface cliff occupies ~30% of the viewport width
+   */
+  function computeIdealZoom() {
+    const vW = container.clientWidth || window.innerWidth;
+    // Surface cliff width is ~1250 px. To cover 30% of vW:
+    const zoomFor30PctCliff = (0.30 * vW) / 1250;
+    return Math.min(0.50, Math.max(0.25, zoomFor30PctCliff));
+  }
+
+  /**
+   * Jump to Specific World Position with 30% Cliff Framing
    */
   function flyToWorldPosition(targetX, targetY, targetZoom = null) {
     if (targetZoom !== null) {
@@ -347,12 +370,17 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
     const vW = container.clientWidth;
     const vH = container.clientHeight;
 
-    const targetScrollLeft = targetX * currentZoom - vW / 2;
-    const targetScrollTop = targetY * currentZoom - vH / 2;
+    // Align camera so cliff occupies left ~28-30% and target is in the right open water
+    const cliffX = getCliffEdgeX(targetY);
+    const idealCliffScrollLeft = Math.max(0, cliffX * currentZoom - 0.28 * vW);
+    const targetCenteredScrollLeft = Math.max(0, targetX * currentZoom - vW * 0.65);
+    const targetScrollLeft = Math.max(0, Math.min(idealCliffScrollLeft, targetCenteredScrollLeft));
+
+    const targetScrollTop = Math.max(0, targetY * currentZoom - vH / 2);
 
     container.scrollTo({
-      left: Math.max(0, targetScrollLeft),
-      top: Math.max(0, targetScrollTop),
+      left: targetScrollLeft,
+      top: targetScrollTop,
       behavior: 'smooth',
     });
 
@@ -527,12 +555,27 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
     isDragging = false;
   });
 
-  // Wheel Zoom (Ctrl+Wheel or Trackpad Pinch)
+  // Wheel Zoom & Trench Camera Descent Tracking
   container.addEventListener('wheel', (e) => {
     if (e.ctrlKey || e.metaKey) {
       e.preventDefault();
       const zoomFactor = e.deltaY < 0 ? 1.15 : 0.87;
       applyZoom(currentZoom * zoomFactor, e.clientX, e.clientY);
+    } else if (!isDragging) {
+      // Natural trench descent camera tracking: as user scrolls vertically down,
+      // softly guide scrollLeft so that the cliff wall always stays at ~28-30% on the left,
+      // and all marine species remain in full view on the right 70%.
+      const vW = container.clientWidth;
+      const vH = container.clientHeight;
+      const predictedTop = container.scrollTop + e.deltaY;
+      const focusY = (predictedTop + vH * 0.4) / currentZoom;
+      const cliffX = getCliffEdgeX(focusY);
+      const idealScrollLeft = Math.max(0, cliffX * currentZoom - 0.28 * vW);
+      
+      const diff = idealScrollLeft - container.scrollLeft;
+      if (Math.abs(diff) > 2) {
+        container.scrollLeft += diff * 0.18;
+      }
     }
   }, { passive: false });
 
@@ -586,8 +629,9 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
   btnZoom100.addEventListener('click', () => applyZoom(1.0));
 
   btnZoomReset.addEventListener('click', () => {
-    const fitZoom = (container.clientHeight - 40) / WORLD_HEIGHT;
-    applyZoom(Math.max(MIN_ZOOM, fitZoom));
+    const idealZoom = computeIdealZoom();
+    applyZoom(idealZoom);
+    container.scrollLeft = 0;
   });
 
   // Waypoint Buttons
@@ -665,10 +709,13 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
   // 1. Render all 54 specimens and layers
   renderAssetBibleStage();
 
-  // 2. Initialize opening frame at Surface & Diver view (X=1200, Y=800, Zoom=0.5)
+  // 2. Initialize opening frame: 30% left cliff coverage, 70% right open ocean
   setTimeout(() => {
-    applyZoom(0.5);
-    flyToWorldPosition(1200, 800, 0.5);
+    const idealZoom = computeIdealZoom();
+    applyZoom(idealZoom);
+    container.scrollLeft = 0;
+    container.scrollTop = 0;
+    updateTelemetry();
   }, 100);
 
 })();

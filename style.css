@@ -413,137 +413,11 @@ html, body {
   font-size: 0.9rem;
 }
 
-/* ==========================================================================
-   Radar Minimap (Bottom-Right Picture-in-Picture)
-   ========================================================================== */
-
-.radar-minimap {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 220px;
-  background: rgba(4, 15, 26, 0.88);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid var(--border-bright);
-  border-radius: 14px;
-  padding: 12px;
-  z-index: 1000;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 20px rgba(0, 232, 255, 0.15);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  transition: transform 0.25s ease, border-color 0.25s ease;
-}
-
-.radar-minimap:hover {
-  border-color: var(--cyan-core);
-  transform: translateY(-2px);
-}
-
-.minimap-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.minimap-tag {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: var(--cyan-core);
-  letter-spacing: 0.08em;
-}
-
-.radar-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--cyan-core);
-  box-shadow: 0 0 6px var(--cyan-core);
-  animation: radarPing 1.8s infinite ease-out;
-}
-
 @keyframes radarPing {
   0% { transform: scale(1); opacity: 1; }
   100% { transform: scale(2.2); opacity: 0; }
 }
 
-.minimap-coords {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: var(--text-muted);
-}
-
-.minimap-viewport-container {
-  position: relative;
-  width: 100%;
-  height: 260px; /* Aspect ratio ~ 0.75 for 14931 x 19963 */
-  background: #010c16;
-  border: 1px solid rgba(0, 232, 255, 0.2);
-  border-radius: 6px;
-  overflow: hidden;
-  cursor: crosshair;
-}
-
-.minimap-graphic {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* Active Viewport Lens Box on Minimap */
-.minimap-lens {
-  position: absolute;
-  border: 2px solid var(--cyan-core);
-  background: rgba(0, 232, 255, 0.15);
-  box-shadow: 0 0 12px rgba(0, 232, 255, 0.4), inset 0 0 8px rgba(0, 232, 255, 0.2);
-  pointer-events: none;
-  border-radius: 2px;
-  transform: translate3d(0, 0, 0);
-  transition: width 0.05s ease, height 0.05s ease;
-}
-
-.lens-crosshair {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 6px;
-  height: 6px;
-  transform: translate(-50%, -50%);
-}
-
-.lens-crosshair::before, .lens-crosshair::after {
-  content: '';
-  position: absolute;
-  background: var(--cyan-core);
-}
-
-.lens-crosshair::before {
-  top: 2px;
-  left: -4px;
-  width: 14px;
-  height: 1px;
-}
-
-.lens-crosshair::after {
-  top: -4px;
-  left: 2px;
-  width: 1px;
-  height: 14px;
-}
-
-.minimap-scale {
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 0.52rem;
-  color: var(--text-muted);
-  padding: 0 2px;
-}
 
 /* ==========================================================================
    Inspector Card / Hover Tooltip
@@ -619,12 +493,6 @@ html, body {
 @media (max-width: 900px) {
   .hud-telemetry {
     display: none;
-  }
-  .radar-minimap {
-    width: 170px;
-  }
-  .minimap-viewport-container {
-    height: 200px;
   }
 }
 
@@ -861,55 +729,7 @@ html, body {
   50% { transform: scale(1.05); opacity: 0.75; }
 }
 
-/* Specimen Callout Tags & Leaders (Layer 90) */
-.specimen-tag {
-  position: absolute;
-  bottom: -46px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(3, 18, 32, 0.88);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--border-bright);
-  border-radius: 20px;
-  padding: 5px 14px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  font-family: var(--font-sans);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 10px var(--cyan-glow);
-  cursor: pointer;
-  pointer-events: auto;
-  transition: all 0.25s ease;
-  user-select: none;
-}
 
-.specimen-tag:hover {
-  background: rgba(0, 232, 255, 0.22);
-  border-color: var(--cyan-core);
-  color: var(--cyan-core);
-  transform: translateX(-50%) translateY(-2px);
-  box-shadow: 0 6px 22px rgba(0, 232, 255, 0.5);
-}
-
-.tag-depth {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: #ffc83b;
-  font-weight: 500;
-}
-
-.tag-scale-badge {
-  font-size: 0.62rem;
-  color: #50e3c2;
-  background: rgba(80, 227, 194, 0.15);
-  border-radius: 10px;
-  padding: 1px 6px;
-}
 
 /* Reticle Beacon for Microscopic True Scale */
 .true-scale-active .ocean-specimen.microscopic-true-scale::before {
@@ -926,49 +746,7 @@ html, body {
   pointer-events: none;
 }
 
-/* Zone Divider Banners across the canvas (Layer 90) */
-.zone-boundary-banner {
-  position: absolute;
-  left: 3200px;
-  right: 600px;
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  pointer-events: none;
-  user-select: none;
-}
 
-.banner-line {
-  flex: 1;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(0, 232, 255, 0.8) 0%, rgba(0, 232, 255, 0.2) 80%, transparent 100%);
-  box-shadow: 0 0 12px var(--cyan-core);
-}
-
-.banner-pill {
-  background: rgba(2, 12, 22, 0.92);
-  border: 1px solid var(--cyan-core);
-  border-radius: 24px;
-  padding: 8px 24px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 0 24px var(--cyan-glow);
-}
-
-.banner-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--cyan-core);
-}
-
-.banner-depth {
-  font-family: var(--font-mono);
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: #ffc83b;
-}
 
 /* ==========================================================================
    Specimen Detail Modal (Layer 100)

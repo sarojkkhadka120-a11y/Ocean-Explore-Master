@@ -52,10 +52,6 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
   const btnZoom100 = document.getElementById('btn-zoom-100');
   const btnToggleInspector = document.getElementById('btn-toggle-inspector');
 
-  // Minimap Elements
-  const minimapContainer = document.getElementById('minimap-container');
-  const minimapLens = document.getElementById('minimap-lens');
-  const minimapCoords = document.getElementById('minimap-coords');
 
   // Inspector Elements
   const inspectorCard = document.getElementById('inspector-card');
@@ -94,8 +90,6 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
   let startX = 0;
   let startY = 0;
   let scrollStartX = 0;
-  let scrollStartY = 0;
-  let isMinimapDragging = false;
   let inspectorActive = false;
 
   let currentScaleMode = 'display'; // 'display' | 'physical'
@@ -153,33 +147,7 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
       70: layer70,
       80: layer80,
     };
-
-    // 1. Render Zone Boundary Banners across Layer 90
-    const ZONE_BANNERS = [
-      { depth: 0, title: 'EPIPELAGIC ZONE (SUNLIGHT ZONE)', range: '0 m – 200 m (Surface to 656 ft)', desc: '100% of photosynthesizing marine life' },
-      { depth: 200, title: 'MESOPELAGIC ZONE (TWILIGHT ZONE)', range: '200 m – 1,000 m (656 to 3,280 ft)', desc: 'Faint blue twilight & daily vertical migration' },
-      { depth: 1000, title: 'BATHYPELAGIC ZONE (MIDNIGHT ZONE)', range: '1,000 m – 4,000 m (3,280 to 13,123 ft)', desc: 'Absolute darkness & intense bioluminescent lures' },
-      { depth: 4000, title: 'ABYSSOPELAGIC ZONE (THE ABYSSAL PLAIN)', range: '4,000 m – 6,000 m (13,123 to 19,685 ft)', desc: 'Freezing temperatures & crushing hydrostatic pressure' },
-      { depth: 6000, title: 'HADOPELAGIC ZONE (THE DEEP TRENCHES)', range: '6,000 m – 10,000 m (19,685 to 32,808 ft)', desc: 'Challenger Deep & tectonic subduction fault lines' },
-      { depth: 10000, title: 'OCEAN TRENCH BED & CHALLENGER DEEP', range: '10,000 m (32,808 ft floor)', desc: 'The deepest known point on Earth' },
-    ];
-
-    ZONE_BANNERS.forEach((zb) => {
-      const bannerY = OceanAssetManifest.depthToWorldY(zb.depth);
-      const banner = document.createElement('div');
-      banner.className = 'zone-boundary-banner';
-      banner.style.top = `${Math.round(bannerY)}px`;
-      banner.innerHTML = `
-        <div class="banner-pill">
-          <span class="banner-title">${zb.title}</span>
-          <span class="banner-depth">${zb.range}</span>
-        </div>
-        <div class="banner-line"></div>
-      `;
-      layer90.appendChild(banner);
-    });
-
-    // 2. Render Marine Snow Atmospheric Effects
+    // 1. Render Marine Snow Atmospheric Effects
     const snowSparse = document.createElement('div');
     snowSparse.className = 'marine-snow-drift';
     snowSparse.style.top = `${Math.round(OceanAssetManifest.depthToWorldY(800))}px`;
@@ -264,28 +232,6 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
       });
 
       targetLayer.appendChild(specimenElem);
-
-      // Specimen Callout Tag (Layer 90) for all informative entities
-      if (asset.category !== 'effect') {
-        const tag = document.createElement('div');
-        tag.className = 'specimen-tag';
-        tag.dataset.assetId = asset.id;
-        tag.style.left = `${asset.worldX + asset.worldWidth / 2}px`;
-        tag.style.top = `${asset.worldY + Math.max(80, asset.worldWidth * 0.65)}px`;
-
-        tag.innerHTML = `
-          <span>${getSpecimenEmoji(asset)} ${asset.name}</span>
-          <span class="tag-depth">${asset.displayDepthM.toLocaleString()} m</span>
-          ${asset.enlargedForVisibility ? '<span class="tag-scale-badge">Enlarged</span>' : ''}
-        `;
-
-        tag.addEventListener('click', (e) => {
-          e.stopPropagation();
-          openSpecimenModal(asset);
-        });
-
-        layer90.appendChild(tag);
-      }
     });
   }
 
@@ -332,7 +278,6 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
     container.scrollTop = Math.max(0, newScrollTop);
 
     updateTelemetry();
-    updateMinimap();
   }
 
   /**
@@ -382,35 +327,7 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
     telemetryZoom.textContent = `${Math.round(currentZoom * 100)}%`;
   }
 
-  /**
-   * Update Minimap Radar Lens
-   */
-  function updateMinimap() {
-    const vW = container.clientWidth;
-    const vH = container.clientHeight;
 
-    const miniW = minimapContainer.clientWidth;
-    const miniH = minimapContainer.clientHeight;
-
-    // Visible world rectangle
-    const visibleWorldX = container.scrollLeft / currentZoom;
-    const visibleWorldY = container.scrollTop / currentZoom;
-    const visibleWorldW = vW / currentZoom;
-    const visibleWorldH = vH / currentZoom;
-
-    // Ratio onto minimap
-    const lensX = (visibleWorldX / WORLD_WIDTH) * miniW;
-    const lensY = (visibleWorldY / WORLD_HEIGHT) * miniH;
-    const lensW = Math.max(6, (visibleWorldW / WORLD_WIDTH) * miniW);
-    const lensH = Math.max(6, (visibleWorldH / WORLD_HEIGHT) * miniH);
-
-    minimapLens.style.left = `${Math.max(0, Math.min(lensX, miniW - lensW))}px`;
-    minimapLens.style.top = `${Math.max(0, Math.min(lensY, miniH - lensH))}px`;
-    minimapLens.style.width = `${Math.min(lensW, miniW)}px`;
-    minimapLens.style.height = `${Math.min(lensH, miniH)}px`;
-
-    minimapCoords.textContent = `${Math.round(visibleWorldX)}, ${Math.round(visibleWorldY)}`;
-  }
 
   /**
    * Jump to Specific World Position
@@ -441,22 +358,7 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
 
     setTimeout(() => {
       updateTelemetry();
-      updateMinimap();
     }, 200);
-  }
-
-  /**
-   * Navigate via Minimap Click/Drag
-   */
-  function handleMinimapInteraction(e) {
-    const rect = minimapContainer.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
-
-    const targetWorldX = (clickX / rect.width) * WORLD_WIDTH;
-    const targetWorldY = (clickY / rect.height) * WORLD_HEIGHT;
-
-    flyToWorldPosition(targetWorldX, targetWorldY);
   }
 
   /**
@@ -598,12 +500,11 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
 
   container.addEventListener('scroll', () => {
     updateTelemetry();
-    updateMinimap();
   });
 
   // Mouse Drag to Pan
   container.addEventListener('mousedown', (e) => {
-    if (e.target.closest('#hud-header') || e.target.closest('#radar-minimap') || e.target.closest('#waypoints-bar') || e.target.closest('.specimen-modal')) return;
+    if (e.target.closest('#hud-header') || e.target.closest('#waypoints-bar') || e.target.closest('.specimen-modal')) return;
     isDragging = true;
     startX = e.clientX;
     startY = e.clientY;
@@ -612,11 +513,6 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
   });
 
   window.addEventListener('mousemove', (e) => {
-    if (isMinimapDragging) {
-      handleMinimapInteraction(e);
-      return;
-    }
-
     if (!isDragging) return;
     e.preventDefault();
 
@@ -629,7 +525,6 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
 
   window.addEventListener('mouseup', () => {
     isDragging = false;
-    isMinimapDragging = false;
   });
 
   // Wheel Zoom (Ctrl+Wheel or Trackpad Pinch)
@@ -683,11 +578,7 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
     touchStartDist = 0;
   });
 
-  // Minimap Interaction Listeners
-  minimapContainer.addEventListener('mousedown', (e) => {
-    isMinimapDragging = true;
-    handleMinimapInteraction(e);
-  });
+
 
   // Zoom Controls
   btnZoomIn.addEventListener('click', () => applyZoom(currentZoom * 1.35));
@@ -765,7 +656,6 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
   // Window Resize
   window.addEventListener('resize', () => {
     updateTelemetry();
-    updateMinimap();
   });
 
   // ==========================================================================

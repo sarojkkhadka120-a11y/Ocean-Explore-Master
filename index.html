@@ -107,40 +107,40 @@
     <button class="waypoint-pill" data-x="2400" data-y="1220" data-zoom="0.8">
       🤿 Coral Ledge <small>(35m)</small>
     </button>
-    <button class="waypoint-pill" data-x="9800" data-y="1300" data-zoom="0.5">
+    <button class="waypoint-pill" data-x="7465" data-y="1300" data-zoom="0.5">
       🐋 Blue Whale <small>(80m)</small>
     </button>
-    <button class="waypoint-pill" data-x="6700" data-y="2200" data-zoom="0.7">
+    <button class="waypoint-pill" data-x="7465" data-y="2200" data-zoom="0.7">
       🐟 Barreleye <small>(560m)</small>
     </button>
-    <button class="waypoint-pill" data-x="6200" data-y="2750" data-zoom="0.5">
+    <button class="waypoint-pill" data-x="7465" data-y="2750" data-zoom="0.5">
       🦑 Giant Squid <small>(850m)</small>
     </button>
-    <button class="waypoint-pill" data-x="5800" data-y="3410" data-zoom="0.7">
+    <button class="waypoint-pill" data-x="7465" data-y="3410" data-zoom="0.7">
       💡 Anglerfish <small>(1,200m)</small>
     </button>
-    <button class="waypoint-pill" data-x="6300" data-y="5380" data-zoom="0.6">
+    <button class="waypoint-pill" data-x="7465" data-y="5380" data-zoom="0.6">
       🐙 Dumbo Octopus <small>(2,250m)</small>
     </button>
-    <button class="waypoint-pill" data-x="3800" data-y="7080" data-zoom="0.5">
+    <button class="waypoint-pill" data-x="7465" data-y="7080" data-zoom="0.5">
       🦴 Whale Fall <small>(3,150m)</small>
     </button>
-    <button class="waypoint-pill" data-x="6200" data-y="8300" data-zoom="0.35">
+    <button class="waypoint-pill" data-x="7465" data-y="8300" data-zoom="0.35">
       🚢 Titanic Wreck <small>(3,800m)</small>
     </button>
     <button class="waypoint-pill" data-x="3400" data-y="9340" data-zoom="0.5">
       🌋 Hydrothermal Vent <small>(4,350m)</small>
     </button>
-    <button class="waypoint-pill" data-x="7800" data-y="9520" data-zoom="0.6">
+    <button class="waypoint-pill" data-x="7465" data-y="9520" data-zoom="0.6">
       🐖 Sea Pigs <small>(4,450m)</small>
     </button>
-    <button class="waypoint-pill" data-x="7900" data-y="12150" data-zoom="0.5">
+    <button class="waypoint-pill" data-x="7465" data-y="12150" data-zoom="0.5">
       🛸 Shinkai 6500 <small>(5,850m)</small>
     </button>
-    <button class="waypoint-pill" data-x="6800" data-y="14320" data-zoom="0.6">
+    <button class="waypoint-pill" data-x="7465" data-y="14320" data-zoom="0.6">
       🐟 Hadal Snailfish <small>(7,000m)</small>
     </button>
-    <button class="waypoint-pill" data-x="7900" data-y="19580" data-zoom="0.5">
+    <button class="waypoint-pill" data-x="7465" data-y="19580" data-zoom="0.5">
       🛸 Full-Depth Sub <small>(9,800m)</small>
     </button>
     <button class="waypoint-pill" data-x="3300" data-y="18080" data-zoom="0.35">
@@ -212,69 +212,7 @@
     </div>
   </main>
 
-  <!-- =========================================================================
-       4. Minimap / Radar HUD (Layer 100)
-       ========================================================================= -->
-  <aside class="radar-minimap" id="radar-minimap" title="Ocean Radar Minimap — Click or Drag to Jump">
-    <div class="minimap-header">
-      <div class="minimap-tag">
-        <span class="radar-dot"></span>
-        <span>RADAR OVERVIEW</span>
-      </div>
-      <span class="minimap-coords" id="minimap-coords">14,931 &times; 19,963</span>
-    </div>
 
-    <div class="minimap-viewport-container" id="minimap-container">
-      <!-- Mini Ocean Canvas Graphic -->
-      <svg class="minimap-graphic" viewBox="0 0 14931 19963" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="mini-sky" x1="0" y1="1143" x2="0" y2="0" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#c9ecee" />
-            <stop offset="1" stop-color="#49a9e6" />
-          </linearGradient>
-          <linearGradient id="mini-ocean" x1="0" y1="1152" x2="0" y2="19963" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#34c6d3" />
-            <stop offset="0.08" stop-color="#168aa0" />
-            <stop offset="0.4" stop-color="#0b5874" />
-            <stop offset="0.6" stop-color="#07364f" />
-            <stop offset="1" stop-color="#031f31" />
-          </linearGradient>
-        </defs>
-        <!-- Mini Sky -->
-        <rect x="0" y="0" width="14931" height="1143" fill="url(#mini-sky)" />
-        <!-- Mini Ocean -->
-        <rect x="0" y="1152" width="14931" height="18811" fill="url(#mini-ocean)" />
-        <!-- Mini Mountain Silhouette -->
-        <polygon points="385,1126 1000,932 2317,1126" fill="#7ecae7" opacity="0.6" />
-        <!-- Mini Cliff Contour -->
-        <polygon points="-50,5433 1811,6202 3159,6860 3900,8373 4204,9718 4962,10130 5649,10564 6843,12902 8403,15735 10074,17126 12751,19207 -50,19207" fill="#062235" opacity="0.8" />
-        <!-- Mini Island -->
-        <polygon points="-303,1182 100,500 814,1182" fill="#023d54" />
-        <!-- Mini Water Surface Line -->
-        <line x1="0" y1="1152" x2="14931" y2="1152" stroke="#00e8ff" stroke-width="140" opacity="0.8" />
-        
-        <!-- Minimap Landmark Markers -->
-        <circle cx="9800" cy="1303" r="160" fill="#00e8ff" opacity="0.9" /> <!-- Blue Whale -->
-        <circle cx="6200" cy="8300" r="280" fill="#f5a623" opacity="0.95" /> <!-- Titanic -->
-        <circle cx="3400" cy="9335" r="200" fill="#ff4d4d" opacity="0.9" /> <!-- Vents -->
-        <circle cx="7900" cy="12157" r="180" fill="#50e3c2" opacity="0.9" /> <!-- Shinkai -->
-        <circle cx="7900" cy="19587" r="180" fill="#bd10e0" opacity="0.9" /> <!-- Full-Depth -->
-      </svg>
-
-      <!-- Active Viewport Box Indicator -->
-      <div class="minimap-lens" id="minimap-lens">
-        <div class="lens-crosshair"></div>
-      </div>
-    </div>
-
-    <!-- Minimap Quick Depths -->
-    <div class="minimap-scale">
-      <span>0 m (Sunlight)</span>
-      <span>1,000 m (Midnight)</span>
-      <span>3,800 m (Titanic)</span>
-      <span>10,000 m (Trench Bed)</span>
-    </div>
-  </aside>
 
   <!-- =========================================================================
        5. Specimen Detail Modal (Layer 100)

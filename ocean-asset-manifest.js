@@ -530,7 +530,7 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~50 cm length',
       depthRange: '170–2,140 m',
       description: 'A classic example of deep-sea gigantism. A distant crustacean relative of pillbugs, with heavy chitinous armor adapted to feast on marine carrion.',
-      worldX: 2650,
+      worldX: 3500,
       mirror: false,
     },
     {
@@ -568,7 +568,7 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~20–30 cm width',
       depthRange: '1,000–7,000 m',
       description: 'Flaps prominent ear-like fins extending from its mantle, drifting gently above the bathyal seabed like a floating deep-sea parachute.',
-      worldX: 2750,
+      worldX: 3700,
       mirror: false,
     },
     {
@@ -644,7 +644,7 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~25 m skeleton span',
       depthRange: '1,500–4,000 m',
       description: 'When a whale dies, its carcass sinks to create a thriving biological oasis supporting specialized scavengers and bone-eating Osedax worms for decades.',
-      worldX: 3600,
+      worldX: 4150,
       mirror: false,
     },
     {
@@ -724,7 +724,7 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Chimney tower ~18 m height',
       depthRange: '2,000–5,000 m',
       description: 'Mineral-rich 400°C fluids erupting into near-freezing sea water, nourishing giant Riftia tubeworm colonies that thrive entirely without sunlight.',
-      worldX: 4650,
+      worldX: 5250,
       mirror: false,
     },
     {
@@ -956,7 +956,7 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Tectonic fault ledge ~85 m span',
       depthRange: '8,500–10,000 m',
       description: 'The monumental boundary where oceanic tectonic plates collide, creating sheer vertical drop-offs covered in ultra-fine pelagic ooze.',
-      worldX: 11000,
+      worldX: 11400,
       mirror: false,
     },
     {
@@ -975,7 +975,7 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~2.2 m frame height',
       depthRange: '0–11,000 m',
       description: 'Reinforced with titanium and benthos glass to withstand 16,000 psi of pressure, collecting water chemistry and video records from Earth’s deepest abyss.',
-      worldX: 11800,
+      worldX: 12100,
       mirror: false,
     },
     {
@@ -994,7 +994,7 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~4.6 m length (90 mm titanium hull)',
       depthRange: '0–11,000 m',
       description: 'The pinnacle of marine engineering. A commercial crewed submersible capable of repeated, unlimited descents to the absolute floor of Challenger Deep.',
-      worldX: 12300,
+      worldX: 13350,
       mirror: false,
     },
 

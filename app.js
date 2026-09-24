@@ -281,28 +281,38 @@ import OceanAssetManifest from './ocean-asset-manifest.js';
   }
 
   /**
-   * Calculate Depth & Ocean Zone from Y coordinate
+   * Calculate Depth & Ocean Zone from Y coordinate using progressive curve
+   * Perfectly matches the vertical spacing of the species and landmarks.
    */
   function calculateDepthAndZone(worldY) {
-    if (worldY < WATER_LINE_Y) {
+    if (worldY <= WATER_LINE_Y) {
       return {
         depthMeters: 0,
         zoneName: 'Surface & Atmosphere',
       };
     }
 
-    const submergedY = worldY - WATER_LINE_Y;
-    const maxSubmerged = WORLD_HEIGHT - WATER_LINE_Y;
-    const depthMeters = Math.min(10000, Math.round((submergedY / maxSubmerged) * MAX_OCEAN_DEPTH_METERS));
-
+    let depthMeters = 0;
     let zoneName = 'Epipelagic (Sunlight Zone)';
-    if (depthMeters > 200 && depthMeters <= 1000) {
+
+    if (worldY <= 4450) {
+      depthMeters = Math.round(((worldY - WATER_LINE_Y) / (4450 - WATER_LINE_Y)) * 200);
+      zoneName = 'Epipelagic (Sunlight Zone)';
+    } else if (worldY <= 8100) {
+      depthMeters = Math.round(200 + ((worldY - 4450) / (8100 - 4450)) * 800);
       zoneName = 'Mesopelagic (Twilight Zone)';
-    } else if (depthMeters > 1000 && depthMeters <= 4000) {
+    } else if (worldY <= 14350) {
+      if (worldY <= 13350) {
+        depthMeters = Math.round(1000 + ((worldY - 8100) / (13350 - 8100)) * 2800);
+      } else {
+        depthMeters = Math.round(3800 + ((worldY - 13350) / (14350 - 13350)) * 200);
+      }
       zoneName = 'Bathypelagic (Midnight Zone)';
-    } else if (depthMeters > 4000 && depthMeters <= 6000) {
+    } else if (worldY <= 17500) {
+      depthMeters = Math.round(4000 + ((worldY - 14350) / (17500 - 14350)) * 2000);
       zoneName = 'Abyssopelagic (The Abyss)';
-    } else if (depthMeters > 6000) {
+    } else {
+      depthMeters = Math.min(10000, Math.round(6000 + ((worldY - 17500) / (19963 - 17500)) * 4000));
       zoneName = 'Hadopelagic (The Trenches)';
     }
 

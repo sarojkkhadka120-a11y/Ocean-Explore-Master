@@ -22,8 +22,14 @@ const MAX_OCEAN_DEPTH_M = 10000;
 
   // Formula to calculate world Y coordinate from depth in meters (0 - 10,000 m)
   function depthToWorldY(depthM) {
-    const submergedSpan = WORLD_HEIGHT_PX - WATER_LINE_Y_PX;
-    return WATER_LINE_Y_PX + (depthM / MAX_OCEAN_DEPTH_M) * submergedSpan;
+    if (depthM <= 0) return 1152.57;
+    if (depthM <= 200) return 1152.57 + (depthM / 200) * (4450 - 1152.57);
+    if (depthM <= 1000) return 4450 + ((depthM - 200) / 800) * (8100 - 4450);
+    if (depthM <= 3800) return 8100 + ((depthM - 1000) / 2800) * (13350 - 8100);
+    if (depthM <= 4000) return 13350 + ((depthM - 3800) / 200) * (14350 - 13350);
+    if (depthM <= 6000) return 14350 + ((depthM - 4000) / 2000) * (17500 - 14350);
+    if (depthM <= 10000) return 17500 + ((depthM - 6000) / 4000) * (19963 - 17500);
+    return 19963;
   }
 
   // Master Inventory (54 Assets per Asset Bible)
@@ -48,6 +54,7 @@ const MAX_OCEAN_DEPTH_M = 10000;
       depthRange: '0–50 m',
       description: 'Three playful bottlenose dolphins swimming in a loose pod in the bright surface layer. Highly intelligent marine mammals that navigate using echolocation.',
       worldX: 2150,
+      worldY: 1320,
       mirror: false,
     },
     {
@@ -66,7 +73,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~1.5 m adult length',
       depthRange: '0–100 m',
       description: 'An adult green sea turtle gliding through the upper sunlit waters with a calm, four-flipper stroke. Famous for long-distance oceanic migrations.',
-      worldX: 2500,
+      worldX: 2470,
+      worldY: 1650,
       mirror: false,
     },
     {
@@ -85,7 +93,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Forest fronds up to 30 m height',
       depthRange: '5–35 m',
       description: 'Dense towers of giant kelp anchoring along the island shallows, providing shelter and rich foraging grounds for countless coastal species.',
-      worldX: 1450,
+      worldX: 1560,
+      worldY: 1980,
       mirror: false,
     },
     {
@@ -104,7 +113,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Reef platform span ~60 m',
       depthRange: '1–40 m',
       description: 'Vibrant living coral structure sheltering thousands of reef inhabitants, bathed in abundant sunlight filtering through the turquoise shallows.',
-      worldX: 1650,
+      worldX: 1750,
+      worldY: 2300,
       mirror: false,
     },
     {
@@ -123,7 +133,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~7 m wingspan',
       depthRange: '0–120 m',
       description: 'A majestic oceanic manta ray soaring gracefully through sunlit pelagic currents, filtering zooplankton with its broad cephalic fins.',
-      worldX: 2800,
+      worldX: 2875,
+      worldY: 2640,
       mirror: true,
     },
     {
@@ -142,7 +153,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~1.9–2.5 m length',
       depthRange: '0–280 m',
       description: 'An agile, streamlined apex predator patrolling the sunlit drop-off. Features classic hydrodynamic countershading and keen electroreceptive senses.',
-      worldX: 2300,
+      worldX: 2505,
+      worldY: 2980,
       mirror: false,
     },
     {
@@ -161,7 +173,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~30 m length (~190 metric tons)',
       depthRange: '0–500 m',
       description: 'The largest animal ever known to have lived on Earth. Glides horizontally across the open sunlit sea with a heart the size of a small car.',
-      worldX: 2650,
+      worldX: 3015,
+      worldY: 3360,
       mirror: false,
     },
     {
@@ -180,7 +193,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~18 m length',
       depthRange: '0–700 m',
       description: 'The gentle giant of the ocean world, covered in unique constellations of white spots. Feeds harmlessly on plankton and microscopic krill.',
-      worldX: 3000,
+      worldX: 3515,
+      worldY: 3740,
       mirror: true,
     },
     {
@@ -199,7 +213,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~2.0 m each (school of 7)',
       depthRange: '0–550 m',
       description: 'A lightning-fast school of bluefin tuna cruising in tight, synchronized formation, capable of reaching burst swimming speeds up to 70 km/h.',
-      worldX: 2350,
+      worldX: 3145,
+      worldY: 4100,
       mirror: false,
     },
     {
@@ -218,7 +233,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~30 cm bell diameter each',
       depthRange: '0–500 m',
       description: 'Translucent moon jellies undulating softly near the base of the sunlight zone, their horseshoe-shaped gonads glowing faintly in the dimming turquoise water.',
-      worldX: 2750,
+      worldX: 3670,
+      worldY: 4450,
       mirror: false,
     },
 
@@ -241,7 +257,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~10–15 cm each (group of 9)',
       depthRange: '200–1,000 m',
       description: 'Small mesopelagic fish studded with bioluminescent photophores. They make up the largest vertebrate biomass migration on Earth every night.',
-      worldX: 2400,
+      worldX: 3720,
+      worldY: 4850,
       mirror: true,
     },
     {
@@ -260,7 +277,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~15 cm body length',
       depthRange: '100–3,000 m',
       description: 'Propels itself using eight shimmering rows of fused microscopic cilia, refracting residual light and bioluminescence into iridescent rainbow ribbons.',
-      worldX: 2750,
+      worldX: 4140,
+      worldY: 5200,
       mirror: false,
     },
     {
@@ -279,7 +297,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~8 m ribbon length',
       depthRange: '200–1,000 m',
       description: 'The longest bony fish alive. Swims vertically with undulating red dorsal crest rays, inspiring centuries of mythical sea-serpent legends.',
-      worldX: 2500,
+      worldX: 3610,
+      worldY: 5550,
       mirror: false,
     },
     {
@@ -298,7 +317,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~15 cm length',
       depthRange: '400–800 m',
       description: 'Famous for its completely transparent fluid-filled head dome and rotating emerald-green tubular eyes that peer straight upward to detect prey silhouettes.',
-      worldX: 2850,
+      worldX: 4080,
+      worldY: 5900,
       mirror: false,
     },
     {
@@ -317,7 +337,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~40 m colony chain',
       depthRange: '300–1,000 m',
       description: 'A massive colonial super-organism comprised of millions of specialized zooids linked together in an ethereal blue-bioluminescent string.',
-      worldX: 2600,
+      worldX: 4020,
+      worldY: 6600,
       mirror: true,
     },
     {
@@ -336,7 +357,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~30 cm mantle length',
       depthRange: '600–900 m',
       description: 'Thrives in extreme oxygen-minimum zones. Uses its webbed cloak-like arms and retractable filaments to gather falling marine snow rather than hunting live prey.',
-      worldX: 2950,
+      worldX: 4845,
+      worldY: 6950,
       mirror: false,
     },
     {
@@ -355,7 +377,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~13 m total length',
       depthRange: '300–1,000 m',
       description: 'Possesses basketball-sized eyes designed to spot the bioluminescent wake of approaching sperm whales in the dark twilight depths.',
-      worldX: 2700,
+      worldX: 5080,
+      worldY: 7350,
       mirror: false,
     },
     {
@@ -374,7 +397,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Cliff colony span ~15 m',
       depthRange: '500–1,200 m',
       description: 'Delicate glass sponges and soft corals clinging directly to the sheer basalt face of the continental cliff wall, filtering rich deep-sea currents.',
-      worldX: 2250,
+      worldX: 4680,
+      worldY: 7700,
       mirror: false,
     },
     {
@@ -393,7 +417,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~18–20 m adult length',
       depthRange: '0–2,000 m',
       description: 'The champion mammalian diver. Plunges into pitch-black waters for over 90 minutes to duel giant squids using powerful sonic echolocation clicks.',
-      worldX: 3150,
+      worldX: 5680,
+      worldY: 8100,
       mirror: true,
     },
 
@@ -416,7 +441,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~18–20 cm female length',
       depthRange: '1,000–2,000 m',
       description: 'The iconic resident of the midnight bathypelagic zone. Dangles a modified dorsal spine (esca) packed with symbiotic bioluminescent bacteria to lure unsuspecting prey.',
-      worldX: 2500,
+      worldX: 5425,
+      worldY: 8500,
       mirror: false,
     },
     {
@@ -435,7 +461,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~5.2 m hull length',
       depthRange: '0–1,500 m',
       description: 'A certified deep-submergence vehicle with acrylic viewing port and twin hydraulic manipulator arms, surveying the upper bathypelagic slope.',
-      worldX: 3000,
+      worldX: 5905,
+      worldY: 8850,
       mirror: false,
     },
     {
@@ -454,7 +481,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~1.0 m total length',
       depthRange: '500–3,000 m',
       description: 'Possesses an enormous, loosely hinged jaw that can unhinge to engulf prey much larger than itself, trailed by a thin whip-like bioluminescent tail.',
-      worldX: 3450,
+      worldX: 5715,
+      worldY: 9200,
       mirror: true,
     },
     {
@@ -473,7 +501,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~2.0 m length',
       depthRange: '50–1,500 m',
       description: 'Often called a "living fossil" due to its primitive eel-like anatomy, six frilled gill slits, and 300 needle-sharp three-pronged teeth.',
-      worldX: 2950,
+      worldX: 6055,
+      worldY: 9550,
       mirror: false,
     },
     {
@@ -492,7 +521,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~16 cm length',
       depthRange: '500–5,000 m',
       description: 'Has the largest teeth relative to body size of any known marine species, slotting into special sockets beside its brain so it can close its jaws.',
-      worldX: 3350,
+      worldX: 5800,
+      worldY: 9900,
       mirror: true,
     },
     {
@@ -511,7 +541,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~40 cm female length',
       depthRange: '1,000–2,000 m',
       description: 'An elongated ambush predator that produces red bioluminescence—a secret wavelength invisible to most other deep-sea life, granting it night vision.',
-      worldX: 3000,
+      worldX: 6195,
+      worldY: 10250,
       mirror: false,
     },
     {
@@ -530,7 +561,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~50 cm length',
       depthRange: '170–2,140 m',
       description: 'A classic example of deep-sea gigantism. A distant crustacean relative of pillbugs, with heavy chitinous armor adapted to feast on marine carrion.',
-      worldX: 3500,
+      worldX: 5760,
+      worldY: 10600,
       mirror: false,
     },
     {
@@ -549,7 +581,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~3.0 m frame length',
       depthRange: '0–4,000 m',
       description: 'High-definition robotic explorer tethered to research ships, equipped with manipulator arms, suction samplers, and multi-angle 4K cameras.',
-      worldX: 3250,
+      worldX: 6370,
+      worldY: 11150,
       mirror: false,
     },
     {
@@ -568,7 +601,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~20–30 cm width',
       depthRange: '1,000–7,000 m',
       description: 'Flaps prominent ear-like fins extending from its mantle, drifting gently above the bathyal seabed like a floating deep-sea parachute.',
-      worldX: 3700,
+      worldX: 6835,
+      worldY: 11500,
       mirror: false,
     },
     {
@@ -587,7 +621,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~7 m length with filaments',
       depthRange: '1,900–6,200 m',
       description: 'One of the rarest and most alien cephalopods ever filmed. Holds its elbow-jointed arms perpendicular to its body with gossamer filaments trailing below.',
-      worldX: 3550,
+      worldX: 6775,
+      worldY: 11900,
       mirror: false,
     },
     {
@@ -606,7 +641,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~1.1 m length',
       depthRange: '1,000–4,000 m',
       description: 'Prominent, heavily adapted benthic fish with huge pressure-resistant eyes and a long tapered tail that glides millimeter-close to the muddy sediment.',
-      worldX: 3850,
+      worldX: 6640,
+      worldY: 12250,
       mirror: true,
     },
     {
@@ -625,7 +661,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~2.2 m frame height',
       depthRange: '1,000–11,000 m',
       description: 'Free-falling instrument platform with glass buoyancy spheres, environmental sensors, time-lapse cameras, and acoustic release weights.',
-      worldX: 4200,
+      worldX: 6980,
+      worldY: 12600,
       mirror: false,
     },
     {
@@ -644,7 +681,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~25 m skeleton span',
       depthRange: '1,500–4,000 m',
       description: 'When a whale dies, its carcass sinks to create a thriving biological oasis supporting specialized scavengers and bone-eating Osedax worms for decades.',
-      worldX: 4150,
+      worldX: 6825,
+      worldY: 12950,
       mirror: false,
     },
     {
@@ -663,7 +701,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Historical length 269 m (883 ft)',
       depthRange: '3,800 m (12,467 ft)',
       description: 'The master scale reference for the ocean world. Resting peacefully on the Atlantic abyssal plain since 1912, surveyed with reverence and historical care.',
-      worldX: 4800,
+      worldX: 7010,
+      worldY: 13350,
       mirror: false,
     },
     {
@@ -682,7 +721,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Scattered field ~75 m span',
       depthRange: '3,800–3,850 m',
       description: 'Sparse historical machinery and structural hull fragments resting gently on the sediment floor, supporting deep-sea microfauna.',
-      worldX: 5600,
+      worldX: 8005,
+      worldY: 13700,
       mirror: false,
     },
 
@@ -705,7 +745,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~40 cm length (fin stilts ~1 m)',
       depthRange: '1,000–6,000 m',
       description: 'Stands motionless facing upstream on three elongated fin rays like a tripod, patiently waiting for tiny crustaceans to brush against its pectoral sensors.',
-      worldX: 5150,
+      worldX: 7965,
+      worldY: 14350,
       mirror: false,
     },
     {
@@ -724,7 +765,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Chimney tower ~18 m height',
       depthRange: '2,000–5,000 m',
       description: 'Mineral-rich 400°C fluids erupting into near-freezing sea water, nourishing giant Riftia tubeworm colonies that thrive entirely without sunlight.',
-      worldX: 5250,
+      worldX: 8095,
+      worldY: 14750,
       mirror: false,
     },
     {
@@ -743,7 +785,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~10–15 cm each (group of 3)',
       depthRange: '1,200–6,000 m',
       description: 'Cute, plump abyssal sea cucumbers that march across muddy sediment on hydraulic tube feet, scavenging organic detritus that falls from upper zones.',
-      worldX: 5300,
+      worldX: 8625,
+      worldY: 15150,
       mirror: false,
     },
     {
@@ -762,7 +805,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~25 cm length',
       depthRange: '500–6,000 m',
       description: 'Also known as the "Headless Chicken Monster". Uses webbed swimming sails to lift itself off the seabed and gently drift across abyssal currents.',
-      worldX: 5750,
+      worldX: 9305,
+      worldY: 15550,
       mirror: true,
     },
     {
@@ -781,7 +825,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Five arms spanning ~25 cm each',
       depthRange: '2,000–6,000 m',
       description: 'Delicate echinoderms blanketing seafloor sediments with slender, flexible arms that sweep incoming currents for microscopic organic morsels.',
-      worldX: 5450,
+      worldX: 8985,
+      worldY: 15950,
       mirror: false,
     },
     {
@@ -800,7 +845,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~1.0 m sponge structure',
       depthRange: '1,000–6,000 m',
       description: 'Constructs an intricate, flexible skeleton made of pure biogenic silica (fiber-optic glass) capable of enduring thousands of years under immense pressures.',
-      worldX: 5850,
+      worldX: 9515,
+      worldY: 16350,
       mirror: false,
     },
     {
@@ -819,7 +865,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Single-celled test ~20 cm diameter',
       depthRange: '4,000–10,000 m',
       description: 'Among the largest single-celled organisms known to science. Forms fragile, branching chambers out of glued sediment grains on the deep ocean floor.',
-      worldX: 6100,
+      worldX: 9725,
+      worldY: 16750,
       mirror: false,
     },
     {
@@ -838,7 +885,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Nodule bed ~70 m span',
       depthRange: '4,000–6,000 m',
       description: 'Million-year-old metallic concretions that precipitate out of seawater, providing indispensable hard substrate for deep-sea encrusting sponges.',
-      worldX: 6350,
+      worldX: 10115,
+      worldY: 17150,
       mirror: false,
     },
     {
@@ -857,7 +905,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~9.7 m vessel length',
       depthRange: '0–6,500 m',
       description: 'State-of-the-art titanium pressure sphere carrying three scientists into the abyssal gloom, powered by zinc-oxygen fuel cells and bright xenon searchlights.',
-      worldX: 6750,
+      worldX: 11045,
+      worldY: 17500,
       mirror: false,
     },
 
@@ -880,7 +929,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~28 cm length',
       depthRange: '6,000–8,200 m',
       description: 'The deepest living fish discovered by marine science. Pale and scaleless, its cell membranes and enzymes are fortified with TMAO to resist crushing hydrostatic pressures exceeding 1,000 atmospheres.',
-      worldX: 8300,
+      worldX: 11475,
+      worldY: 17850,
       mirror: false,
     },
     {
@@ -899,7 +949,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~5–10 cm each (swarm of 7)',
       depthRange: '6,000–10,000 m',
       description: 'Hardy scavenging crustaceans that gather in ravenous swarms around bait stations and food falls in the deepest underwater canyons.',
-      worldX: 8850,
+      worldX: 12055,
+      worldY: 18200,
       mirror: true,
     },
     {
@@ -918,7 +969,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~15 cm length',
       depthRange: '7,000–9,500 m',
       description: 'Semi-translucent hadal echinoderm with soft lavender and cyan hues, dominating the biological biomass of isolated trench bottoms.',
-      worldX: 9400,
+      worldX: 12230,
+      worldY: 18550,
       mirror: false,
     },
     {
@@ -937,7 +989,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~12 cm length',
       depthRange: '6,000–10,000 m',
       description: 'A shimmering bristled segmented worm rippling smoothly through the extreme depths, grazing on microbial mats growing on trench fault lines.',
-      worldX: 10200,
+      worldX: 12805,
+      worldY: 18900,
       mirror: false,
     },
     {
@@ -956,7 +1009,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Tectonic fault ledge ~85 m span',
       depthRange: '8,500–10,000 m',
       description: 'The monumental boundary where oceanic tectonic plates collide, creating sheer vertical drop-offs covered in ultra-fine pelagic ooze.',
-      worldX: 11400,
+      worldX: 12685,
+      worldY: 19250,
       mirror: false,
     },
     {
@@ -975,7 +1029,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~2.2 m frame height',
       depthRange: '0–11,000 m',
       description: 'Reinforced with titanium and benthos glass to withstand 16,000 psi of pressure, collecting water chemistry and video records from Earth’s deepest abyss.',
-      worldX: 12100,
+      worldX: 13235,
+      worldY: 19500,
       mirror: false,
     },
     {
@@ -994,7 +1049,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: '~4.6 m length (90 mm titanium hull)',
       depthRange: '0–11,000 m',
       description: 'The pinnacle of marine engineering. A commercial crewed submersible capable of repeated, unlimited descents to the absolute floor of Challenger Deep.',
-      worldX: 13350,
+      worldX: 13690,
+      worldY: 19750,
       mirror: false,
     },
 
@@ -1017,7 +1073,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Distant ambient school',
       depthRange: '100–2,500 m',
       description: 'Faint silhouettes of fish cruising through distant water strata, creating natural depth and layered ocean parallax.',
-      worldX: 3100,
+      worldX: 4400,
+      worldY: 6250,
       mirror: false,
     },
     {
@@ -1036,7 +1093,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Soft sediment plume ~50 m span',
       depthRange: '3,000–10,000 m',
       description: 'Soft cloud of mineral sediment and organic silt stirred up by benthic lander contact and gentle seafloor currents.',
-      worldX: 5100,
+      worldX: 7730,
+      worldY: 13950,
       mirror: false,
     },
     {
@@ -1055,7 +1113,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Continuous falling shower',
       depthRange: '800–10,000 m',
       description: 'A gentle shower of biological detritus, dead plankton, and minerals that nourishes the entire deep-sea food web.',
-      worldX: 2000,
+      worldX: 4700,
+      worldY: 10900,
       mirror: false,
     },
     {
@@ -1074,7 +1133,8 @@ const MAX_OCEAN_DEPTH_M = 10000;
       realSizeDesc: 'Dense benthic particulate field',
       depthRange: '3,000–10,000 m',
       description: 'Dense drifts of organic marine snow drifting lazily across the deep abyssal plain and into hadal trenches.',
-      worldX: 6500,
+      worldX: 9740,
+      worldY: 17700,
       mirror: false,
     },
   ];
@@ -1092,7 +1152,7 @@ const MAX_OCEAN_DEPTH_M = 10000;
     const fallbackSrc = `generated/${item.folder}/${item.file}`;
 
     // World coordinates
-    const worldY = depthToWorldY(item.displayDepthM);
+    const worldY = item.worldY !== undefined ? item.worldY : Math.round(depthToWorldY(item.displayDepthM));
 
     // Sizing
     const displayWidthPx = Math.round(TITANIC_WORLD_WIDTH_PX * (item.displayScalePct / 100));
